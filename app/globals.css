@@ -139,6 +139,7 @@ main { overflow: hidden; }
 .step-title h3 { font-size: 18px; }
 .step-title p { color: var(--muted); font-size: 12px; margin-top: 4px; }
 .field-grid { display: grid; grid-template-columns: minmax(0,1fr) 150px; gap: 14px; }
+.field-grid.add-grid { grid-template-columns: minmax(0,1fr) 140px 124px; align-items: end; }
 .field-grid.two { grid-template-columns: 1.2fr .8fr; }
 .field { display: block; }
 .field > span { display: block; font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 8px; }
@@ -153,6 +154,30 @@ main { overflow: hidden; }
 .stepper input::-webkit-inner-spin-button { display: none; }
 .field-help { display: block; color: var(--orange); line-height: 1.4; margin-top: 8px; font-weight: 700; }
 .inline-note { margin: 10px 0 0; font-size: 12px; color: var(--orange); font-weight: 700; }
+.add-product {
+  height: 48px; border: 0; border-radius: 5px; background: var(--orange); color: white;
+  cursor: pointer; font-size: 13px; font-weight: 900; box-shadow: 0 7px 16px rgba(240,111,60,.18);
+}
+.add-product:hover { background: #db5d2d; }
+.cart-stack { margin-top: 20px; border-top: 2px solid var(--ink); }
+.cart-empty {
+  min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 5px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; background: #faf8f2;
+}
+.cart-empty b { color: var(--ink); font-size: 13px; }
+.cart-row {
+  display: grid; grid-template-columns: 34px minmax(0,1fr) 84px 94px 36px; gap: 10px;
+  min-height: 70px; align-items: center; border-bottom: 1px solid var(--line);
+}
+.cart-index { font-family: Georgia, serif; color: var(--orange); font-size: 12px; }
+.cart-name { min-width: 0; }
+.cart-name b, .cart-name small { display: block; }
+.cart-name b { font-size: 12px; line-height: 1.35; }
+.cart-name small { margin-top: 4px; color: var(--muted); font-size: 10px; }
+.cart-row > strong { text-align: right; font-family: Georgia, serif; font-size: 14px; white-space: nowrap; }
+.cart-stepper { justify-content: center; }
+.remove-product { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 10px; padding: 5px 0; }
+.remove-product:hover { color: var(--orange); }
 .extras-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; max-height: 390px; overflow: auto; padding-right: 4px; }
 .extra-card { min-height: 64px; border: 1px solid var(--line); border-radius: 5px; display: flex; align-items: center; justify-content: space-between; padding-right: 9px; transition: .15s; background: white; }
 .extra-card.selected { border-color: var(--teal-2); background: #f1f8f5; }
@@ -177,6 +202,8 @@ main { overflow: hidden; }
 .estimate-lines div { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; padding: 7px 0; font-size: 12px; }
 .estimate-lines span { color: var(--muted); }
 .estimate-lines b { white-space: nowrap; }
+.estimate-lines .summary-subtotal { border-top: 1px solid rgba(20,43,42,.14); margin-top: 7px; padding-top: 12px; }
+.estimate-lines .summary-subtotal span, .estimate-lines .summary-subtotal b { color: var(--ink); font-weight: 900; }
 .estimate-footer p { color: var(--muted); line-height: 1.55; font-size: 12px; margin: 19px 0; }
 .estimate-footer p b { color: var(--ink); }
 .estimate-footer button { width: 100%; background: transparent; border: 1px solid rgba(20,43,42,.25); border-radius: 5px; padding: 11px; color: var(--ink); cursor: pointer; font-weight: 800; }
@@ -252,7 +279,10 @@ footer a:hover { opacity: 1; }
   .mode-tab:last-child { border-bottom: 0; }
   .mode-tab small { display: none; }
   .step-block { padding: 25px 18px; }
-  .field-grid, .field-grid.two { grid-template-columns: 1fr; }
+  .field-grid, .field-grid.add-grid, .field-grid.two { grid-template-columns: 1fr; }
+  .cart-row { grid-template-columns: 27px minmax(0,1fr) 78px; padding: 12px 0; }
+  .cart-row > strong { grid-column: 2; text-align: left; }
+  .remove-product { grid-column: 3; grid-row: 2; }
   .extras-grid { grid-template-columns: 1fr; max-height: 430px; }
   .estimate-card { padding: 22px; }
   .fees-section, .notes-section { padding: 72px 18px; }

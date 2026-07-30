@@ -155,6 +155,7 @@ export default function Home() {
   const [mode, setMode] = useState<"appliance" | "split" | "window">("appliance");
   const [productId, setProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(1);
+  const [cart, setCart] = useState<Record<string, number>>({});
   const [area, setArea] = useState("0");
   const [stairUnits, setStairUnits] = useState(0);
   const [selectedExtras, setSelectedExtras] = useState<Record<string, number>>({});
@@ -168,8 +169,6 @@ export default function Home() {
     const list = next === "appliance" ? products : next === "split" ? splitAC : windowAC;
     setMode(next);
     setProductId(list[0].id);
-    setStairUnits(0);
-    setSelectedExtras({});
   };
 
   const availableExtras = useMemo(() => {
@@ -182,9 +181,16 @@ export default function Home() {
     const fee = extras.find((item) => item.id === id);
     return sum + (fee?.price ?? 0) * qty;
   }, 0);
-  const baseTotal = (current.price ?? 0) * quantity;
-  const areaTotal = areaFees[area]?.price ?? 0;
-  const stairTotal = (current.stairRate ?? 0) * stairUnits * quantity;
+  const orderableItems = [...products, ...splitAC, ...windowAC];
+  const cartRows = Object.entries(cart)
+    .map(([id, qty]) => ({ item: orderableItems.find((entry) => entry.id === id), qty }))
+    .filter((row): row is { item: FeeItem; qty: number } => Boolean(row.item));
+  const baseTotal = cartRows.reduce((sum, row) => sum + (row.item.price ?? 0) * row.qty, 0);
+  const areaTotal = cartRows.length ? (areaFees[area]?.price ?? 0) : 0;
+  const stairTotal = cartRows.reduce(
+    (sum, row) => sum + (row.item.stairRate ?? 0) * stairUnits * row.qty,
+    0,
+  );
   const total = baseTotal + areaTotal + stairTotal + extraTotal;
 
   const allFees = [...products, ...splitAC, ...windowAC, ...extras];
@@ -196,6 +202,20 @@ export default function Home() {
 
   const setExtra = (id: string, value: number) => {
     setSelectedExtras((prev) => {
+      const next = { ...prev };
+      if (value <= 0) delete next[id];
+      else next[id] = value;
+      return next;
+    });
+  };
+
+  const addToCart = () => {
+    setCart((prev) => ({ ...prev, [current.id]: (prev[current.id] ?? 0) + quantity }));
+    setQuantity(1);
+  };
+
+  const setCartQuantity = (id: string, value: number) => {
+    setCart((prev) => {
       const next = { ...prev };
       if (value <= 0) delete next[id];
       else next[id] = value;
@@ -227,7 +247,7 @@ export default function Home() {
           <p className="eyebrow"><span /> 五甲店 · 新臺幣含稅</p>
           <h1>配送安裝費，<br /><em>一眼看懂。</em></h1>
           <p className="hero-lead">
-            選商品、地區與施工加項，即時計算預估費用。把八頁密集價目表，整理成現場也能快速使用的工具。
+            同一地址可混搭多種商品，逐項加入後一次合計運送、樓層與施工費。把八頁密集價目表，整理成現場也能快速使用的工具。
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#calculator">開始計算 <span>↓</span></a>
@@ -256,8 +276,8 @@ export default function Home() {
       <section className="calculator-section" id="calculator">
         <div className="section-heading light-heading">
           <p className="eyebrow"><span /> 費用試算器</p>
-          <h2>三步完成估價</h2>
-          <p>所有金額均為新臺幣含稅。可計價項目會自動加總，需現場評估者不納入合計。</p>
+          <h2>同址混搭，一次合計</h2>
+          <p>先把所有商品加入清單，再設定同一配送地址與施工加項。跨區費整張訂單只計一次。</p>
         </div>
 
         <div className="mode-tabs" role="tablist" aria-label="選擇試算類型">
@@ -281,8 +301,8 @@ export default function Home() {
         <div className="calculator-grid">
           <div className="calculator-form">
             <div className="step-block">
-              <div className="step-title"><b>01</b><div><h3>選擇商品</h3><p>基本運送／安裝費</p></div></div>
-              <div className="field-grid">
+              <div className="step-title"><b>01</b><div><h3>建立商品清單</h3><p>不同類型可連續加入，同品項會自動合併數量</p></div></div>
+              <div className="field-grid add-grid">
                 <label className="field wide">
                   <span>商品或安裝規格</span>
                   <select value={productId} onChange={(e) => setProductId(e.target.value)}>
@@ -297,8 +317,26 @@ export default function Home() {
                     <button onClick={() => setQuantity(quantity + 1)} aria-label="增加數量">＋</button>
                   </div>
                 </label>
+                <button className="add-product" onClick={addToCart}>＋ 加入清單</button>
               </div>
               {current.note && <p className="inline-note">{current.note}</p>}
+              <div className="cart-stack" aria-label="本次配送商品清單">
+                {cartRows.length === 0 ? (
+                  <div className="cart-empty"><b>尚未加入商品</b><span>選好商品與數量後，按「加入清單」</span></div>
+                ) : cartRows.map(({ item, qty }) => (
+                  <div className="cart-row" key={`cart-${item.id}`}>
+                    <div className="cart-index">{String(cartRows.findIndex((row) => row.item.id === item.id) + 1).padStart(2, "0")}</div>
+                    <div className="cart-name"><b>{item.name}</b><small>{money(item.price ?? 0)}／{item.unit}</small></div>
+                    <div className="mini-stepper cart-stepper">
+                      <button onClick={() => setCartQuantity(item.id, qty - 1)} aria-label={`減少${item.name}`}>−</button>
+                      <span>{qty}</span>
+                      <button onClick={() => setCartQuantity(item.id, qty + 1)} aria-label={`增加${item.name}`}>＋</button>
+                    </div>
+                    <strong>{money((item.price ?? 0) * qty)}</strong>
+                    <button className="remove-product" onClick={() => setCartQuantity(item.id, 0)} aria-label={`移除${item.name}`}>移除</button>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="step-block">
@@ -320,7 +358,7 @@ export default function Home() {
                     <button onClick={() => setStairUnits(stairUnits + 1)} aria-label="增加計費層數">＋</button>
                   </div>
                   <small className="field-help">
-                    {current.stairRate ? `每層（含半層）${money(current.stairRate)}；三樓含以上適用` : "此品項未列固定樓層費"}
+                    系統依清單內每件商品的級距分別計算；三樓（含）以上適用
                   </small>
                 </label>
               </div>
@@ -353,19 +391,22 @@ export default function Home() {
 
           <aside className="estimate-card" aria-live="polite">
             <div className="estimate-label"><span className="live-dot">試算結果</span><small>價格含稅</small></div>
-            <h3>{current.name}</h3>
+            <h3>{cartRows.length ? `同址配送｜${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品` : "先加入本次配送商品"}</h3>
             <div className="estimate-total"><small>預估合計</small><strong>{money(total)}</strong></div>
             <div className="estimate-lines">
-              <div><span>基本費 × {quantity}</span><b>{money(baseTotal)}</b></div>
-              <div><span>跨區費</span><b>{money(areaTotal)}</b></div>
+              {cartRows.map(({ item, qty }) => (
+                <div key={`summary-${item.id}`}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
+              ))}
+              {cartRows.length > 0 && <div className="summary-subtotal"><span>商品基本費小計</span><b>{money(baseTotal)}</b></div>}
+              {cartRows.length > 0 && <div><span>跨區費（同址計一次）</span><b>{money(areaTotal)}</b></div>}
               {stairTotal > 0 && <div><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
               {selectedExtraRows.map(({ item, qty }) => (
                 <div key={item.id}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
               ))}
             </div>
             <div className="estimate-footer">
-              <p><b>此為快速預估</b><br />危險施工、未列項目與「另議」項目，須依現場評估報價。</p>
-              <button onClick={() => { setQuantity(1); setArea("0"); setStairUnits(0); setSelectedExtras({}); }}>清除重算</button>
+              <p><b>同址混搭計價提醒</b><br />本工具先按各品項標準費率加總；同車次的非四機優惠、贈品與特殊組合，請再由門市確認。</p>
+              <button onClick={() => { setCart({}); setQuantity(1); setArea("0"); setStairUnits(0); setSelectedExtras({}); }}>清空整張訂單</button>
             </div>
           </aside>
         </div>
