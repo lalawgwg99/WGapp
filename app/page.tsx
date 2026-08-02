@@ -2,156 +2,7 @@
 
 import { useState } from "react";
 
-type FeeItem = {
-  id: string;
-  category: string;
-  name: string;
-  price: number | null;
-  unit?: string;
-  note?: string;
-  stairRate?: number;
-};
-
-const products: FeeItem[] = [
-  { id: "tv32", category: "電視", name: "液晶電視 32 吋（含）以下", price: 300, unit: "台", stairRate: 50 },
-  { id: "tv33", category: "電視", name: "液晶電視 33–49 吋", price: 450, unit: "台", stairRate: 50 },
-  { id: "tv50", category: "電視", name: "液晶電視 50–54 吋", price: 550, unit: "台", stairRate: 50 },
-  { id: "tv55", category: "電視", name: "液晶電視 55–59 吋", price: 600, unit: "台", stairRate: 100 },
-  { id: "tv60", category: "電視", name: "液晶電視 60–74 吋", price: 700, unit: "台", stairRate: 100 },
-  { id: "tv75", category: "電視", name: "液晶電視 75 吋（含）以上", price: 1300, unit: "台", stairRate: 100 },
-  { id: "theater-delivery", category: "影音", name: "家庭劇院／卡拉 OK｜只送不裝", price: 300, unit: "組", note: "含拆箱、定位、測試" },
-  { id: "washer12", category: "洗衣", name: "洗衣機 12.5 公斤（含）以下", price: 300, unit: "台", stairRate: 50 },
-  { id: "washer18", category: "洗衣", name: "洗衣機 13–18 公斤（含）", price: 400, unit: "台", stairRate: 100 },
-  { id: "washer19", category: "洗衣", name: "洗衣機 19 公斤（含）以上", price: 500, unit: "台", stairRate: 100 },
-  { id: "tower-delivery", category: "洗衣", name: "上乾下洗洗衣機（洗衣塔／一體成形）｜只送不裝", price: 800, unit: "台", stairRate: 100 },
-  { id: "tower", category: "洗衣", name: "上乾下洗洗衣機（洗衣塔／一體成形）｜運送含基本安裝", price: 2700, unit: "台", stairRate: 100 },
-  { id: "front13", category: "洗衣", name: "滾筒洗衣機 13 公斤（含）以下", price: 600, unit: "台", stairRate: 50 },
-  { id: "front16", category: "洗衣", name: "滾筒洗衣機 14–16 公斤", price: 700, unit: "台", stairRate: 100 },
-  { id: "front17", category: "洗衣", name: "滾筒洗衣機 17 公斤（含）以上", price: 750, unit: "台", stairRate: 100 },
-  { id: "lg-mini", category: "洗衣", name: "LG 下洗迷你洗衣機", price: 300, unit: "台", stairRate: 50 },
-  { id: "dryer10", category: "洗衣", name: "乾衣機 10 公斤（含）以下", price: 250, unit: "台" },
-  { id: "dryer11", category: "洗衣", name: "乾衣機 11 公斤（含）以上", price: 300, unit: "台" },
-  { id: "heat-dryer", category: "洗衣", name: "免曬衣乾衣機", price: 500, unit: "台" },
-  { id: "fridge100", category: "冰箱", name: "冰箱／冷凍櫃 100 公升（含）以下", price: 200, unit: "台", stairRate: 50 },
-  { id: "fridge199", category: "冰箱", name: "冰箱／冷凍櫃 101–199 公升", price: 250, unit: "台", stairRate: 50 },
-  { id: "fridge299", category: "冰箱", name: "冰箱／冷凍櫃 200–299 公升", price: 300, unit: "台", stairRate: 50 },
-  { id: "fridge399", category: "冰箱", name: "冰箱／冷凍櫃 300–399 公升", price: 450, unit: "台", stairRate: 100 },
-  { id: "fridge499", category: "冰箱", name: "冰箱／冷凍櫃 400–499 公升", price: 500, unit: "台", stairRate: 100 },
-  { id: "fridge599", category: "冰箱", name: "冰箱／冷凍櫃 500–599 公升", price: 700, unit: "台", stairRate: 100 },
-  { id: "fridge600", category: "冰箱", name: "冰箱／冷凍櫃 600 公升（含）以上", price: 900, unit: "台", stairRate: 100 },
-  { id: "side-fridge", category: "冰箱", name: "對開冰箱", price: 1200, unit: "台", stairRate: 100 },
-  { id: "knock-fridge", category: "冰箱", name: "LG 敲敲門冰箱", price: 1500, unit: "台", stairRate: 100 },
-  { id: "styler", category: "冰箱", name: "電子衣櫥", price: 600, unit: "台" },
-  { id: "hood", category: "小型家電", name: "排油煙機／瓦斯爐／熱水器", price: 300, unit: "件", note: "運送、拆箱，不含安裝" },
-  { id: "drybox", category: "小型家電", name: "電子防潮箱", price: 300, unit: "件", note: "運送、拆箱，不含安裝" },
-  { id: "small-appliance", category: "小型家電", name: "水冷扇／除濕機／烘碗機等", price: 300, unit: "件", note: "運送、拆箱、定位，不含安裝" },
-];
-
-const splitAC: FeeItem[] = [
-  { id: "split36", category: "分離式冷氣", name: "1 對 1｜3.6 kW 以下（含）", price: 3100, unit: "組", stairRate: 100 },
-  { id: "split41", category: "分離式冷氣", name: "1 對 1｜3.7–4.1 kW", price: 3500, unit: "組", stairRate: 100 },
-  { id: "split52", category: "分離式冷氣", name: "1 對 1｜4.2–5.2 kW", price: 3900, unit: "組", stairRate: 100 },
-  { id: "split65", category: "分離式冷氣", name: "1 對 1｜5.3–6.5 kW", price: 4500, unit: "組", stairRate: 100 },
-  { id: "split72", category: "分離式冷氣", name: "1 對 1｜6.6–7.2 kW", price: 5000, unit: "組", stairRate: 100 },
-  { id: "split91", category: "分離式冷氣", name: "1 對 1｜7.3–9.1 kW", price: 6000, unit: "組", stairRate: 100 },
-  { id: "split116", category: "分離式冷氣", name: "1 對 1｜9.2–11.6 kW", price: 8000, unit: "組", stairRate: 100 },
-  { id: "split117", category: "分離式冷氣", name: "1 對 1｜11.7 kW 以上", price: 9200, unit: "組", stairRate: 100 },
-  { id: "multi12", category: "分離式冷氣", name: "1 對 2｜不限 kW", price: 5000, unit: "組", note: "以 10 米為限；超出由顧客付費", stairRate: 150 },
-  { id: "multi13", category: "分離式冷氣", name: "1 對 3｜不限 kW", price: 5000, unit: "組", note: "以 10 米為限；超出由顧客付費；1 對 4 樓層費再依表類推", stairRate: 200 },
-];
-
-const windowAC: FeeItem[] = [
-  { id: "window32", category: "窗型冷氣", name: "窗型／直立式｜3.2 kW（含）以下", price: 800, unit: "台", stairRate: 100 },
-  { id: "window53", category: "窗型冷氣", name: "窗型／直立式｜3.21–5.3 kW", price: 1000, unit: "台", stairRate: 100 },
-  { id: "window54", category: "窗型冷氣", name: "窗型／直立式｜超過 5.3 kW", price: 1200, unit: "台", stairRate: 100 },
-  { id: "mobile", category: "窗型冷氣", name: "移動式冷氣", price: 800, unit: "台" },
-];
-
-const extras: FeeItem[] = [
-  { id: "door", category: "一般加項", name: "拆卸大門／室內門／過窗", price: 200, unit: "次" },
-  { id: "fridge-door", category: "一般加項", name: "冰箱門拆裝（兩片門板）", price: 300, unit: "台", note: "每超出一片加收 150 元" },
-  { id: "washer-stack", category: "一般加項", name: "滾筒洗衣機堆疊免曬衣乾衣機", price: 2000, unit: "組" },
-  { id: "tv-own-fixed42", category: "電視壁掛", name: "平面固定式｜42 吋以下", price: 800, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-fixed59", category: "電視壁掛", name: "平面固定式｜43–59 吋", price: 1000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-fixed65", category: "電視壁掛", name: "平面固定式｜60–65 吋", price: 1700, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-fixed66", category: "電視壁掛", name: "平面固定式｜66 吋以上", price: 2000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-tilt42", category: "電視壁掛", name: "上下仰角式｜42 吋以下", price: 1100, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-tilt59", category: "電視壁掛", name: "上下仰角式｜43–59 吋", price: 1300, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-tilt65", category: "電視壁掛", name: "上下仰角式｜60–65 吋", price: 1500, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-tilt66", category: "電視壁掛", name: "上下仰角式｜66 吋以上", price: 2000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-arm", category: "電視壁掛", name: "懸臂式／雙臂規格｜所有尺寸", price: 1500, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-fixed55", category: "電視壁掛", name: "平面固定式｜32–55 吋", price: 1500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-fixed56", category: "電視壁掛", name: "平面固定式｜56 吋以上", price: 2500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-tilt", category: "電視壁掛", name: "上下仰角式", price: null, unit: "台", note: "現場報價；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-arm69", category: "電視壁掛", name: "懸臂式／雙臂規格｜32–69 吋", price: 3500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-arm70", category: "電視壁掛", name: "懸臂式／雙臂規格｜70 吋以上", price: 4500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-existing", category: "電視壁掛", name: "既有壁掛架安裝費", price: 300, unit: "台" },
-  { id: "tv-special-wall", category: "電視壁掛", name: "特殊施工／洗洞｜文化石、大理石等", price: null, unit: "次", note: "使用安全合規材質，現場報價" },
-  { id: "cable", category: "電視安裝", name: "室內 CABLE 線（超過 3 米）", price: 30, unit: "米" },
-  { id: "antenna", category: "電視安裝", name: "一般 UHF／VHF 室外天線（五樓以下）", price: 1500, unit: "組" },
-  { id: "digital-antenna", category: "電視安裝", name: "數位 UHF 室外天線（五樓以下）", price: 1200, unit: "組", note: "不含數位機上盒" },
-  { id: "ac-remove11", category: "分離式冷氣", name: "分離式拆舊機｜1 對 1", price: 1000, unit: "組", note: "危險施工另計；舊機回收不收費" },
-  { id: "ac-remove12", category: "分離式冷氣", name: "分離式拆舊機｜1 對 2", price: 1500, unit: "組", note: "危險施工另計；舊機回收不收費" },
-  { id: "pipe23", category: "分離式冷氣", name: "被覆銅管延長｜2”3”", price: 400, unit: "公尺", note: "限用 8mm 以上厚度" },
-  { id: "pipe24", category: "分離式冷氣", name: "被覆銅管延長｜2”4”", price: 500, unit: "公尺", note: "限用 8mm 以上厚度" },
-  { id: "pipe25", category: "分離式冷氣", name: "被覆銅管延長｜2”5”", price: 550, unit: "公尺", note: "限用 8mm 以上厚度" },
-  { id: "pipe35", category: "分離式冷氣", name: "被覆銅管延長｜3”5”", price: 600, unit: "公尺", note: "限用 8mm 以上厚度" },
-  { id: "pipe36", category: "分離式冷氣", name: "被覆銅管延長｜3”6”", price: 600, unit: "公尺", note: "限用 8mm 以上厚度" },
-  { id: "pipe47", category: "分離式冷氣", name: "被覆銅管延長｜4”7”", price: 700, unit: "公尺", note: "限用 8mm 以上厚度" },
-  { id: "flush", category: "分離式冷氣", name: "延用舊管洗管（R141V）", price: 3000, unit: "次" },
-  { id: "duct80", category: "分離式冷氣", name: "銅管管槽 80／100", price: 300, unit: "公尺" },
-  { id: "duct120", category: "分離式冷氣", name: "銅管管槽 120／140", price: 600, unit: "公尺" },
-  { id: "duct-part80", category: "分離式冷氣", name: "管槽配件 80／100", price: 400, unit: "件" },
-  { id: "duct-part120", category: "分離式冷氣", name: "管槽配件 120／140", price: 600, unit: "件" },
-  { id: "refrigerant", category: "分離式冷氣", name: "R32／R410 整台冷媒填充", price: 1200, unit: "台" },
-  { id: "refrigerant-leak", category: "分離式冷氣", name: "R32／R410 冷媒填充（含補漏）", price: 2500, unit: "台" },
-  { id: "hole25", category: "冷氣共用", name: "洗孔｜牆厚 25 公分以內", price: 800, unit: "孔" },
-  { id: "hole40", category: "冷氣共用", name: "洗孔｜牆厚 40 公分內", price: 1000, unit: "孔" },
-  { id: "holewood", category: "冷氣共用", name: "洗孔｜木板牆 3 分板以上", price: 300, unit: "孔" },
-  { id: "drain", category: "冷氣共用", name: "4 分透明排水管", price: 30, unit: "米", note: "一層樓以上另有 100 元／樓層" },
-  { id: "pump-normal", category: "冷氣共用", name: "排水器｜一般型（含安裝）", price: 1600, unit: "個" },
-  { id: "pump-quiet", category: "冷氣共用", name: "排水幫浦｜靜音型", price: 2000, unit: "個" },
-  { id: "galv-small", category: "冷氣共用", name: "鍍鋅豪華架｜小組 80 公分", price: 1000, unit: "組" },
-  { id: "galv-medium", category: "冷氣共用", name: "鍍鋅豪華架｜中組 90 公分", price: 1200, unit: "組" },
-  { id: "galv-large", category: "冷氣共用", name: "鍍鋅豪華架｜大組 100 公分", price: 1500, unit: "組" },
-  { id: "steel-small", category: "冷氣共用", name: "不鏽鋼組合架｜小組 80 公分", price: 3000, unit: "組" },
-  { id: "steel-large", category: "冷氣共用", name: "不鏽鋼組合架｜大組 100 公分", price: 3500, unit: "組" },
-  { id: "floor-rack", category: "冷氣共用", name: "室外機塑鋼落地架", price: 800, unit: "組" },
-  { id: "socket", category: "冷氣共用", name: "電源插座", price: 200, unit: "組", note: "隨機有附則免收" },
-  { id: "plug", category: "冷氣共用", name: "插頭", price: 200, unit: "組" },
-  { id: "box", category: "冷氣共用", name: "冷氣插座盒", price: 400, unit: "個" },
-  { id: "wire20", category: "冷氣共用", name: "電源線／控制線 2.0mm", price: 60, unit: "公尺", note: "甲方得按市場行情調整" },
-  { id: "wire35", category: "冷氣共用", name: "電源線／控制線 3.5mm", price: 75, unit: "公尺", note: "甲方得按市場行情調整" },
-  { id: "wire55", category: "冷氣共用", name: "電源線／控制線 5.5mm", price: 90, unit: "公尺", note: "甲方得按市場行情調整" },
-  { id: "panel", category: "冷氣共用", name: "加裝分電表（電源線另計）", price: 2000, unit: "個" },
-  { id: "breaker", category: "冷氣共用", name: "無熔絲開關 30A–2P", price: 500, unit: "個", note: "不含開關箱" },
-  { id: "split-install-again", category: "分離式冷氣", name: "分次安裝", price: 500, unit: "次" },
-  { id: "window-frame", category: "窗型冷氣", name: "下鋁窗安裝上緣加框架", price: 1000, unit: "台" },
-  { id: "window-enlarge", category: "窗型冷氣", name: "框加大", price: 300, unit: "台", note: "敲水泥牆另議" },
-  { id: "window-hang", category: "窗型冷氣", name: "窗型冷氣懸掛式施工", price: 2500, unit: "台" },
-  { id: "window-cover", category: "窗型冷氣", name: "冷氣窗口封板", price: 300, unit: "窗" },
-  { id: "awning-small", category: "冷氣共用", name: "塑鋼遮雨篷｜小組", price: 1200, unit: "組" },
-  { id: "awning-large", category: "冷氣共用", name: "塑鋼遮雨篷｜大組", price: 1500, unit: "組" },
-  { id: "iron-hollow", category: "冷氣共用", name: "剪鋁／鐵窗｜中空", price: 300, unit: "窗" },
-  { id: "iron-solid", category: "冷氣共用", name: "剪鋁／鐵窗｜實心", price: 600, unit: "窗" },
-  { id: "steel-window", category: "冷氣共用", name: "剪不鏽鋼窗", price: 600, unit: "窗" },
-];
-
-const areaFees: Record<string, { price: number | null; places: string }> = {
-  "0": { price: 0, places: "高雄市（舊）、鳳山市、大寮" },
-  "100": { price: 100, places: "楠梓、旗津" },
-  "200": { price: 200, places: "橋頭、林園、九曲堂、彌陀、大樹、燕巢、梓官、岡山、大社" },
-  "300": { price: 300, places: "屏東市、萬丹、新園、路竹、永安" },
-  "400": { price: 400, places: "田寮、中寮、麟洛、竹田、崁頂、東港" },
-  "500": { price: 500, places: "內門、旗山、阿蓮、湖內、大湖、高樹、里港、九如、林邊" },
-  "600": { price: 600, places: "杉林、美濃、內埔、潮州、新碑" },
-  "700": { price: 700, places: "甲仙、六龜、三地門、鹽埔、萬巒" },
-  "800": { price: 800, places: "涼山、佳平、來義、佳冬" },
-  "900": { price: 900, places: "枋寮" },
-  "1500": { price: 1500, places: "三民、桃源、茂林、霧台、枋山、牡丹、車城、恆春" },
-  "2000": { price: 2000, places: "滿洲" },
-};
-
+import { areaFees, extras, products, splitAC, windowAC, type FeeItem } from "./pricing-data";
 const money = (value: number) => `NT$ ${value.toLocaleString("zh-TW")}`;
 const wallGroup = (item: FeeItem) => item.id.startsWith("tv-own-") ? "own"
   : item.id.startsWith("tv-kit-") ? "kit"
@@ -195,8 +46,11 @@ export default function Home() {
   const [floor, setFloor] = useState(3);
   const [showAllExtras, setShowAllExtras] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<Record<string, number>>({});
-  const [query, setQuery] = useState("");
+  const [globalQuery, setGlobalQuery] = useState("");
+  const [feeQuery, setFeeQuery] = useState("");
   const [feeFilter, setFeeFilter] = useState("全部");
+  const [showAllFees, setShowAllFees] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
 
   const currentList = productCategory === "電視" ? products.filter((item) => item.category === "電視")
     : productCategory === "冰箱" ? products.filter((item) => item.category === "冰箱")
@@ -268,8 +122,40 @@ export default function Home() {
   const filterOptions = ["全部", ...Array.from(new Set(allFees.map((item) => item.category)))];
   const filteredFees = allFees.filter((item) => {
     const haystack = `${item.category}${item.name}${item.note ?? ""}`.toLowerCase();
-    return (feeFilter === "全部" || item.category === feeFilter) && haystack.includes(query.toLowerCase());
+    return (feeFilter === "全部" || item.category === feeFilter) && haystack.includes(feeQuery.toLowerCase());
   });
+  const feeLimit = showAllFees || feeQuery || feeFilter !== "全部" ? 80 : 12;
+
+  const normalizedGlobalQuery = globalQuery.trim().toLowerCase();
+  const globalResults = normalizedGlobalQuery ? [
+    ...orderableItems.map((item) => ({
+      kind: "商品" as const,
+      id: item.id,
+      title: item.name,
+      meta: item.category,
+      price: item.price,
+      value: item.id,
+      searchText: `${item.category}${item.name}${item.note ?? ""}`.toLowerCase(),
+    })),
+    ...areaOptions.map((option) => ({
+      kind: "地區" as const,
+      id: `area-${option.value}`,
+      title: option.place,
+      meta: "跨區配送",
+      price: option.fee,
+      value: option.value,
+      searchText: `${option.place}跨區配送`.toLowerCase(),
+    })),
+    ...extras.map((item) => ({
+      kind: "施工" as const,
+      id: `extra-${item.id}`,
+      title: item.name,
+      meta: item.category,
+      price: item.price,
+      value: item.id,
+      searchText: `${item.category}${item.name}${item.note ?? ""}`.toLowerCase(),
+    })),
+  ].filter((result) => result.searchText.includes(normalizedGlobalQuery)).slice(0, 8) : [];
 
   const setExtra = (id: string, value: number) => {
     setSelectedExtras((prev) => {
@@ -289,6 +175,33 @@ export default function Home() {
     setCart((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
   };
 
+  const goToCalculator = () => {
+    window.setTimeout(() => document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" }), 0);
+  };
+
+  const applyGlobalResult = (result: (typeof globalResults)[number]) => {
+    if (result.kind === "商品") {
+      const item = orderableItems.find((entry) => entry.id === result.value);
+      if (!item) return;
+      const nextCategory: ProductCategory = item.category === "電視" ? "電視"
+        : item.category === "冰箱" ? "冰箱"
+        : item.category === "洗衣" ? "洗衣機"
+        : item.category === "小型家電" ? "小家電"
+        : item.category === "影音" ? "影音"
+        : "冷氣";
+      setProductCategory(nextCategory);
+      selectProduct(item.id);
+      addQuickItem(item.id);
+    } else if (result.kind === "地區") {
+      setArea(result.value);
+    } else {
+      setShowAllExtras(true);
+      setExtra(result.value, 1);
+    }
+    setGlobalQuery("");
+    goToCalculator();
+  };
+
   const setCartQuantity = (id: string, value: number) => {
     setCart((prev) => {
       const next = { ...prev };
@@ -301,6 +214,35 @@ export default function Home() {
   const selectedExtraRows = Object.entries(selectedExtras)
     .map(([id, qty]) => ({ item: extras.find((fee) => fee.id === id), qty }))
     .filter((row): row is { item: FeeItem; qty: number } => Boolean(row.item));
+  const hasQuoteItems = selectedArea.fee === null || selectedExtraRows.some((row) => row.item.price === null);
+  const hasEstimateItems = cartRows.length > 0 || selectedExtraRows.length > 0;
+
+  const copyEstimate = async () => {
+    const lines = [
+      "配送安裝費試算",
+      `配送地點：${selectedArea.place}`,
+      `搬運方式：${noElevator ? `無電梯 ${floor} 樓` : "有電梯／免樓層費"}`,
+      "",
+      ...cartRows.map(({ item, qty }) => `商品｜${item.name} × ${qty}｜${money((item.price ?? 0) * qty)}`),
+      ...(cartRows.length ? [
+        `跨區費｜${selectedArea.fee === null ? "另議" : money(areaTotal)}`,
+        ...(stairTotal > 0 ? [`樓層搬運費｜${money(stairTotal)}`] : []),
+      ] : []),
+      ...selectedExtraRows.map(({ item, qty }) => `加項｜${item.name} × ${qty}｜${item.price === null ? "另議" : money(item.price * qty)}`),
+      "",
+      `${hasQuoteItems ? "已知費用合計" : "預估合計"}｜${money(total)}`,
+      ...(hasQuoteItems ? ["提醒｜另議項目未計入以上合計"] : []),
+      "實際收費以門市與現場施工人員確認為準。",
+    ];
+
+    try {
+      await navigator.clipboard.writeText(lines.join("\n"));
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("error");
+    }
+    window.setTimeout(() => setCopyStatus("idle"), 2200);
+  };
 
   return (
     <main>
@@ -324,6 +266,41 @@ export default function Home() {
           <p className="hero-lead">
             常用商品一鍵加入，選鄉鎮、選樓層，就能看到同一地址的配送安裝總額。
           </p>
+          <div className="universal-search-wrap">
+            <label className="universal-search">
+              <span aria-hidden="true">⌕</span>
+              <input
+                value={globalQuery}
+                onChange={(event) => setGlobalQuery(event.target.value)}
+                placeholder="搜尋商品、地區或施工項目"
+                aria-label="萬用搜尋"
+                aria-expanded={globalResults.length > 0}
+                aria-controls="universal-results"
+                aria-autocomplete="list"
+                role="combobox"
+                autoComplete="off"
+              />
+              {globalQuery && <button type="button" onClick={() => setGlobalQuery("")} aria-label="清除搜尋">×</button>}
+            </label>
+            {globalQuery && (
+              <div className="universal-results" id="universal-results" role="listbox" aria-label="萬用搜尋結果">
+                {globalResults.length > 0 ? globalResults.map((result) => (
+                  <button key={`${result.kind}-${result.id}`} type="button" onClick={() => applyGlobalResult(result)} role="option" aria-selected="false">
+                    <span className={`result-kind kind-${result.kind}`}>{result.kind}</span>
+                    <span className="result-copy"><b>{result.title}</b><small>{result.meta}</small></span>
+                    <span className="result-price">{result.price === null ? "另議" : money(result.price)}</span>
+                    <span className="result-action">{result.kind === "商品" ? "加入" : result.kind === "地區" ? "帶入" : "選取"} →</span>
+                  </button>
+                )) : <p>找不到符合項目，試試「冰箱」、「楠梓」或「銅管」。</p>}
+              </div>
+            )}
+            <div className="search-shortcuts" aria-label="熱門搜尋">
+              <span>熱門：</span>
+              {["冰箱", "分離式", "楠梓", "壁掛"].map((word) => (
+                <button key={word} type="button" onClick={() => setGlobalQuery(word)}>{word}</button>
+              ))}
+            </div>
+          </div>
           <div className="hero-actions">
             <a className="primary-button" href="#calculator">開始計算 <span>↓</span></a>
             <a className="text-link" href="#fees">先看完整價目 →</a>
@@ -476,11 +453,11 @@ export default function Home() {
                   const group = wallGroup(item);
                   return (
                     <div className={`${qty > 0 ? "extra-card selected" : "extra-card"}${needsQuote ? " quote-only" : ""}${group ? ` wall-${group}` : ""}`} key={item.id}>
-                      <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0} disabled={needsQuote}>
-                        <span className="check-mark">{needsQuote ? "詢" : qty > 0 ? "✓" : "+"}</span>
-                        <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}</b><small>{needsQuote ? "現場報價" : `${money(item.price)}／${item.unit}`}</small></span>
+                      <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0}>
+                        <span className="check-mark">{qty > 0 ? "✓" : needsQuote ? "詢" : "+"}</span>
+                        <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}</b><small>{needsQuote ? (qty > 0 ? "已加入 · 現場報價" : "點此加入另議清單") : `${money(item.price)}／${item.unit}`}</small></span>
                       </button>
-                      {qty > 0 && (
+                      {qty > 0 && !needsQuote && (
                         <div className="mini-stepper">
                           <button onClick={() => setExtra(item.id, qty - 1)} aria-label={`減少${item.name}`}>−</button>
                           <span>{qty}</span>
@@ -502,7 +479,7 @@ export default function Home() {
           <aside className="estimate-card" id="estimate" aria-live="polite">
             <div className="estimate-label"><span className="live-dot">試算結果</span><small>價格含稅</small></div>
             <h3>{cartRows.length ? `同址配送｜${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品` : "先加入本次配送商品"}</h3>
-            <div className="estimate-total"><small>預估合計</small><strong>{money(total)}</strong></div>
+            <div className="estimate-total"><small>{hasQuoteItems ? "已知費用合計" : "預估合計"}</small><strong>{money(total)}</strong></div>
             <div className="estimate-lines">
               {cartRows.map(({ item, qty }) => (
                 <div key={`summary-${item.id}`}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
@@ -511,12 +488,16 @@ export default function Home() {
               {cartRows.length > 0 && <div><span>{selectedArea.place}跨區費（同址一次）</span><b>{selectedArea.fee === null ? "另議" : money(areaTotal)}</b></div>}
               {stairTotal > 0 && <div><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
               {selectedExtraRows.map(({ item, qty }) => (
-                <div key={item.id}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
+                <div key={item.id}><span>{item.name} × {qty}</span><b>{item.price === null ? "另議" : money(item.price * qty)}</b></div>
               ))}
             </div>
+            {hasQuoteItems && <p className="quote-warning"><b>另議項目未計入合計</b><br />請向門市或現場施工人員確認後，再補入最終報價。</p>}
             <div className="estimate-footer">
               <p><b>同址混搭計價提醒</b><br />本工具先按各品項標準費率加總；同車次的非四機優惠、贈品與特殊組合，請再由門市確認。</p>
-              <button onClick={() => { setCart({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); }}>清空整張訂單</button>
+              <div className="estimate-actions">
+                <button className="copy-quote" onClick={copyEstimate} disabled={!hasEstimateItems}>{copyStatus === "copied" ? "已複製報價 ✓" : copyStatus === "error" ? "複製失敗，請重試" : "複製報價明細"}</button>
+                <button onClick={() => { setCart({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); setCopyStatus("idle"); }}>清空整張訂單</button>
+              </div>
             </div>
           </aside>
         </div>
@@ -525,7 +506,7 @@ export default function Home() {
       {cartRows.length > 0 && (
         <a className="mobile-total" href="#estimate">
           <span>{cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品</span>
-          <b>{money(total)}</b>
+          <b>{money(total)}{hasQuoteItems && <small>＋另議</small>}</b>
           <em>看明細 ↑</em>
         </a>
       )}
@@ -534,7 +515,7 @@ export default function Home() {
         <div className="fee-toolbar">
           <label className="search-box">
             <span aria-hidden="true">⌕</span>
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜尋：銅管、冰箱、壁掛…" aria-label="搜尋價目" />
+            <input value={feeQuery} onChange={(e) => setFeeQuery(e.target.value)} placeholder="搜尋完整價目：銅管、冰箱、壁掛…" aria-label="搜尋完整價目" />
           </label>
         </div>
         <div className="filter-row" aria-label="價目分類">
@@ -544,7 +525,7 @@ export default function Home() {
         </div>
         <div className="fee-list">
           <div className="fee-list-head"><span>類別／項目</span><span>單價（含稅）</span></div>
-          {filteredFees.slice(0, 80).map((item) => {
+          {filteredFees.slice(0, feeLimit).map((item) => {
             const group = wallGroup(item);
             return (
               <article className={`fee-row${group ? ` wall-row wall-${group}` : ""}`} key={`fee-${item.id}`}>
@@ -555,8 +536,13 @@ export default function Home() {
             );
           })}
           {filteredFees.length === 0 && <p className="empty-state">找不到符合的項目，請換個關鍵字。</p>}
-          {filteredFees.length > 80 && <p className="list-note">共 {filteredFees.length} 筆，請使用搜尋或分類縮小範圍。</p>}
+          {filteredFees.length > feeLimit && feeLimit === 80 && <p className="list-note">共 {filteredFees.length} 筆，請使用搜尋或分類縮小範圍。</p>}
         </div>
+        {!feeQuery && feeFilter === "全部" && filteredFees.length > 12 && (
+          <button className="show-all-fees" type="button" onClick={() => setShowAllFees((value) => !value)}>
+            {showAllFees ? "收起完整價目" : `展開全部 ${filteredFees.length} 筆價目`}
+          </button>
+        )}
       </section>
 
       <section className="area-section">
