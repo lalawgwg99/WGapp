@@ -70,7 +70,6 @@ const windowAC: FeeItem[] = [
 const extras: FeeItem[] = [
   { id: "door", category: "一般加項", name: "拆卸大門／室內門／過窗", price: 200, unit: "次" },
   { id: "fridge-door", category: "一般加項", name: "冰箱門拆裝（兩片門板）", price: 300, unit: "台", note: "每超出一片加收 150 元" },
-  { id: "ice-filter", category: "一般加項", name: "對開冰箱製冰過濾器安裝", price: 1200, unit: "台" },
   { id: "washer-stack", category: "一般加項", name: "滾筒洗衣機堆疊免曬衣乾衣機", price: 2000, unit: "組" },
   { id: "tv-own-fixed42", category: "電視壁掛", name: "平面固定式｜42 吋以下", price: 800, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
   { id: "tv-own-fixed59", category: "電視壁掛", name: "平面固定式｜43–59 吋", price: 1000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
