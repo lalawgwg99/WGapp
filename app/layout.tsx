@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "配送安裝費試算｜易鑫實業行 2026",
+  title: "配送安裝費試算｜2026 價目",
   description: "同一地址混搭多種家電，快速合計配送、跨區、樓層與冷氣安裝費用。",
   metadataBase: new URL("https://wgapp.pages.dev"),
   openGraph: {

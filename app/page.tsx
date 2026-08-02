@@ -23,7 +23,8 @@ const products: FeeItem[] = [
   { id: "washer12", category: "洗衣", name: "洗衣機 12.5 公斤（含）以下", price: 300, unit: "台", stairRate: 50 },
   { id: "washer18", category: "洗衣", name: "洗衣機 13–18 公斤（含）", price: 400, unit: "台", stairRate: 100 },
   { id: "washer19", category: "洗衣", name: "洗衣機 19 公斤（含）以上", price: 500, unit: "台", stairRate: 100 },
-  { id: "tower", category: "洗衣", name: "上乾下洗洗衣機（洗衣塔／一體成形）", price: 2700, unit: "台", stairRate: 100 },
+  { id: "tower-delivery", category: "洗衣", name: "上乾下洗洗衣機（洗衣塔／一體成形）｜只送不裝", price: 800, unit: "台", stairRate: 100 },
+  { id: "tower", category: "洗衣", name: "上乾下洗洗衣機（洗衣塔／一體成形）｜運送含基本安裝", price: 2700, unit: "台", stairRate: 100 },
   { id: "front13", category: "洗衣", name: "滾筒洗衣機 13 公斤（含）以下", price: 600, unit: "台", stairRate: 50 },
   { id: "front16", category: "洗衣", name: "滾筒洗衣機 14–16 公斤", price: 700, unit: "台", stairRate: 100 },
   { id: "front17", category: "洗衣", name: "滾筒洗衣機 17 公斤（含）以上", price: 750, unit: "台", stairRate: 100 },
@@ -71,22 +72,22 @@ const extras: FeeItem[] = [
   { id: "fridge-door", category: "一般加項", name: "冰箱門拆裝（兩片門板）", price: 300, unit: "台", note: "每超出一片加收 150 元" },
   { id: "ice-filter", category: "一般加項", name: "對開冰箱製冰過濾器安裝", price: 1200, unit: "台" },
   { id: "washer-stack", category: "一般加項", name: "滾筒洗衣機堆疊免曬衣乾衣機", price: 2000, unit: "組" },
-  { id: "tv-own-fixed42", category: "電視安裝", name: "自備架｜平面固定式｜42 吋以下", price: 800, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-fixed59", category: "電視安裝", name: "自備架｜平面固定式｜43–59 吋", price: 1000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-fixed65", category: "電視安裝", name: "自備架｜平面固定式｜60–65 吋", price: 1700, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-fixed66", category: "電視安裝", name: "自備架｜平面固定式｜66 吋以上", price: 2000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-tilt42", category: "電視安裝", name: "自備架｜上下仰角式｜42 吋以下", price: 1100, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-tilt59", category: "電視安裝", name: "自備架｜上下仰角式｜43–59 吋", price: 1300, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-tilt65", category: "電視安裝", name: "自備架｜上下仰角式｜60–65 吋", price: 1500, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-tilt66", category: "電視安裝", name: "自備架｜上下仰角式｜66 吋以上", price: 2000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-own-arm", category: "電視安裝", name: "自備架｜懸臂式／雙臂規格｜所有尺寸", price: 1500, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-fixed55", category: "電視安裝", name: "含架套裝｜平面固定式｜32–55 吋", price: 1500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-fixed56", category: "電視安裝", name: "含架套裝｜平面固定式｜56 吋以上", price: 2500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-tilt", category: "電視安裝", name: "含架套裝｜上下仰角式", price: null, unit: "台", note: "現場報價；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-arm69", category: "電視安裝", name: "含架套裝｜懸臂式／雙臂規格｜32–69 吋", price: 3500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-kit-arm70", category: "電視安裝", name: "含架套裝｜懸臂式／雙臂規格｜70 吋以上", price: 4500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
-  { id: "tv-existing", category: "電視安裝", name: "既有壁掛架安裝費", price: 300, unit: "台" },
-  { id: "tv-special-wall", category: "電視安裝", name: "特殊施工／洗洞｜文化石、大理石等", price: null, unit: "次", note: "使用安全合規材質，現場報價" },
+  { id: "tv-own-fixed42", category: "電視壁掛", name: "平面固定式｜42 吋以下", price: 800, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-fixed59", category: "電視壁掛", name: "平面固定式｜43–59 吋", price: 1000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-fixed65", category: "電視壁掛", name: "平面固定式｜60–65 吋", price: 1700, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-fixed66", category: "電視壁掛", name: "平面固定式｜66 吋以上", price: 2000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-tilt42", category: "電視壁掛", name: "上下仰角式｜42 吋以下", price: 1100, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-tilt59", category: "電視壁掛", name: "上下仰角式｜43–59 吋", price: 1300, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-tilt65", category: "電視壁掛", name: "上下仰角式｜60–65 吋", price: 1500, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-tilt66", category: "電視壁掛", name: "上下仰角式｜66 吋以上", price: 2000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-arm", category: "電視壁掛", name: "懸臂式／雙臂規格｜所有尺寸", price: 1500, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-fixed55", category: "電視壁掛", name: "平面固定式｜32–55 吋", price: 1500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-fixed56", category: "電視壁掛", name: "平面固定式｜56 吋以上", price: 2500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-tilt", category: "電視壁掛", name: "上下仰角式", price: null, unit: "台", note: "現場報價；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-arm69", category: "電視壁掛", name: "懸臂式／雙臂規格｜32–69 吋", price: 3500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-arm70", category: "電視壁掛", name: "懸臂式／雙臂規格｜70 吋以上", price: 4500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-existing", category: "電視壁掛", name: "既有壁掛架安裝費", price: 300, unit: "台" },
+  { id: "tv-special-wall", category: "電視壁掛", name: "特殊施工／洗洞｜文化石、大理石等", price: null, unit: "次", note: "使用安全合規材質，現場報價" },
   { id: "cable", category: "電視安裝", name: "室內 CABLE 線（超過 3 米）", price: 30, unit: "米" },
   { id: "antenna", category: "電視安裝", name: "一般 UHF／VHF 室外天線（五樓以下）", price: 1500, unit: "組" },
   { id: "digital-antenna", category: "電視安裝", name: "數位 UHF 室外天線（五樓以下）", price: 1200, unit: "組", note: "不含數位機上盒" },
@@ -153,6 +154,14 @@ const areaFees: Record<string, { price: number; places: string }> = {
 };
 
 const money = (value: number) => `NT$ ${value.toLocaleString("zh-TW")}`;
+const wallGroup = (item: FeeItem) => item.id.startsWith("tv-own-") ? "own"
+  : item.id.startsWith("tv-kit-") ? "kit"
+  : item.id === "tv-existing" || item.id === "tv-special-wall" ? "other"
+  : null;
+const wallGroupLabel = (group: ReturnType<typeof wallGroup>) => group === "own" ? "客戶自備架"
+  : group === "kit" ? "含架套裝"
+  : group === "other" ? "其他／現場"
+  : null;
 const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) =>
   info.places.split("、").map((place) => ({
     value: `${fee}:${place}`,
@@ -229,7 +238,7 @@ export default function Home() {
   const cartHasWindow = cartRows.some((row) => windowAC.some((item) => item.id === row.item.id));
   const cartHasAppliance = cartRows.some((row) => products.some((item) => item.id === row.item.id));
   const extraCategories = new Set<string>();
-  if (mode === "appliance" || cartHasAppliance) ["一般加項", "電視安裝", "影音安裝"].forEach((value) => extraCategories.add(value));
+  if (mode === "appliance" || cartHasAppliance) ["一般加項", "電視壁掛", "電視安裝", "影音安裝"].forEach((value) => extraCategories.add(value));
   if (mode === "split" || cartHasSplit) ["分離式冷氣", "冷氣共用"].forEach((value) => extraCategories.add(value));
   if (mode === "window" || cartHasWindow) ["窗型冷氣", "冷氣共用"].forEach((value) => extraCategories.add(value));
   const relevantExtras = extras.filter((item) => extraCategories.has(item.category));
@@ -465,11 +474,12 @@ export default function Home() {
                 {availableExtras.map((item) => {
                   const qty = selectedExtras[item.id] ?? 0;
                   const needsQuote = item.price === null;
+                  const group = wallGroup(item);
                   return (
-                    <div className={`${qty > 0 ? "extra-card selected" : "extra-card"}${needsQuote ? " quote-only" : ""}`} key={item.id}>
+                    <div className={`${qty > 0 ? "extra-card selected" : "extra-card"}${needsQuote ? " quote-only" : ""}${group ? ` wall-${group}` : ""}`} key={item.id}>
                       <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0} disabled={needsQuote}>
                         <span className="check-mark">{needsQuote ? "詢" : qty > 0 ? "✓" : "+"}</span>
-                        <span><b>{item.name}</b><small>{needsQuote ? "現場報價" : `${money(item.price)}／${item.unit}`}</small></span>
+                        <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}</b><small>{needsQuote ? "現場報價" : `${money(item.price)}／${item.unit}`}</small></span>
                       </button>
                       {qty > 0 && (
                         <div className="mini-stepper">
@@ -535,13 +545,16 @@ export default function Home() {
         </div>
         <div className="fee-list">
           <div className="fee-list-head"><span>類別／項目</span><span>單價（含稅）</span></div>
-          {filteredFees.slice(0, 80).map((item) => (
-            <article className="fee-row" key={`fee-${item.id}`}>
-              <span className="category-tag">{item.category}</span>
-              <div><h3>{item.name}</h3>{item.note && <p>{item.note}</p>}</div>
-              <strong>{item.price === null ? "另議" : money(item.price)}<small>{item.unit ? `／${item.unit}` : ""}</small></strong>
-            </article>
-          ))}
+          {filteredFees.slice(0, 80).map((item) => {
+            const group = wallGroup(item);
+            return (
+              <article className={`fee-row${group ? ` wall-row wall-${group}` : ""}`} key={`fee-${item.id}`}>
+                <span className="category-tag">{group ? wallGroupLabel(group) : item.category}</span>
+                <div><h3>{item.name}</h3>{item.note && <p>{item.note}</p>}</div>
+                <strong>{item.price === null ? "另議" : money(item.price)}<small>{item.unit ? `／${item.unit}` : ""}</small></strong>
+              </article>
+            );
+          })}
           {filteredFees.length === 0 && <p className="empty-state">找不到符合的項目，請換個關鍵字。</p>}
           {filteredFees.length > 80 && <p className="list-note">共 {filteredFees.length} 筆，請使用搜尋或分類縮小範圍。</p>}
         </div>
@@ -584,7 +597,7 @@ export default function Home() {
 
       <footer>
         <div className="brand"><span className="brand-mark">易</span><span>配送安裝費試算</span></div>
-        <p>2026 易鑫實業行 · 五甲店配送安裝價目</p>
+        <p>2026 · 五甲店配送安裝價目</p>
         <a href="#top">回到頁首 ↑</a>
       </footer>
     </main>
