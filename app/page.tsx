@@ -140,7 +140,7 @@ const extras: FeeItem[] = [
 
 const areaFees: Record<string, { price: number; places: string }> = {
   "0": { price: 0, places: "高雄市（舊）、鳳山市、大寮" },
-  "100": { price: 100, places: "橋頭、旗津（成功除外）" },
+  "100": { price: 100, places: "橋頭、旗津" },
   "200": { price: 200, places: "林園、九曲堂、彌陀、大樹、燕巢、梓官、岡山、楠梓、大社" },
   "300": { price: 300, places: "屏東市、萬丹、新園、路竹、永安" },
   "400": { price: 400, places: "田寮、中寮、麟洛、竹田、崁頂、東港" },
