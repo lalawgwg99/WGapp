@@ -227,7 +227,8 @@ main { overflow: hidden; }
 .estimate-footer p b { color: var(--ink); }
 .estimate-footer button { width: 100%; background: transparent; border: 1px solid rgba(20,43,42,.25); border-radius: 5px; padding: 11px; color: var(--ink); cursor: pointer; font-weight: 800; }
 
-.fees-section { max-width: 1160px; margin: 0 auto; padding: 100px 0; }
+.fees-section { max-width: 1160px; margin: 0 auto; padding: 70px 0 100px; }
+.fee-toolbar { display: flex; justify-content: flex-end; margin-bottom: 18px; }
 .heading-row { display: flex; justify-content: space-between; align-items: end; gap: 30px; }
 .heading-row h2, .heading-row p { margin: 0; }
 .heading-row p { margin-top: 10px; }
@@ -308,6 +309,7 @@ footer a:hover { opacity: 1; }
   .fees-section, .notes-section { padding: 72px 18px; }
   .heading-row { align-items: stretch; flex-direction: column; }
   .search-box { width: 100%; }
+  .fee-toolbar { margin-bottom: 14px; }
   .fee-row { grid-template-columns: 78px 1fr; gap: 10px; }
   .fee-row > strong { grid-column: 2; }
   .area-section { padding: 72px 22px; }

@@ -518,15 +518,11 @@ export default function Home() {
       )}
 
       <section className="fees-section" id="fees">
-        <div className="section-heading">
-          <p className="eyebrow"><span /> 完整價目速查</p>
-          <div className="heading-row">
-            <div><h2>找費用，不必翻表格</h2><p>收錄合約第 20–27 頁可直接計價的主要項目。</p></div>
-            <label className="search-box">
-              <span aria-hidden="true">⌕</span>
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜尋：銅管、冰箱、壁掛…" aria-label="搜尋價目" />
-            </label>
-          </div>
+        <div className="fee-toolbar">
+          <label className="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜尋：銅管、冰箱、壁掛…" aria-label="搜尋價目" />
+          </label>
         </div>
         <div className="filter-row" aria-label="價目分類">
           {filterOptions.map((filter) => (
