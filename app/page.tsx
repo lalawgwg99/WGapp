@@ -139,8 +139,8 @@ const extras: FeeItem[] = [
 
 const areaFees: Record<string, { price: number | null; places: string }> = {
   "0": { price: 0, places: "高雄市（舊）、鳳山市、大寮" },
-  "100": { price: 100, places: "橋頭、旗津" },
-  "200": { price: 200, places: "林園、九曲堂、彌陀、大樹、燕巢、梓官、岡山、楠梓、大社" },
+  "100": { price: 100, places: "楠梓、旗津" },
+  "200": { price: 200, places: "林園、九曲堂、彌陀、大樹、燕巢、梓官、岡山、橋頭、大社" },
   "300": { price: 300, places: "屏東市、萬丹、新園、路竹、永安" },
   "400": { price: 400, places: "田寮、中寮、麟洛、竹田、崁頂、東港" },
   "500": { price: 500, places: "內門、旗山、阿蓮、湖內、大湖、高樹、里港、九如、林邊" },
@@ -148,8 +148,8 @@ const areaFees: Record<string, { price: number | null; places: string }> = {
   "700": { price: 700, places: "甲仙、六龜、三地門、鹽埔、萬巒" },
   "800": { price: 800, places: "涼山、佳平、來義、佳冬" },
   "900": { price: 900, places: "枋寮" },
-  "1000": { price: 1000, places: "三民、桃源、茂林、霧台、枋山、牡丹、車城、恆春" },
-  "1200": { price: null, places: "滿州" },
+  "1500": { price: 1500, places: "三民、桃源、茂林、霧台、枋山、牡丹、車城、恆春" },
+  "2000": { price: 2000, places: "滿州" },
 };
 
 const money = (value: number) => `NT$ ${value.toLocaleString("zh-TW")}`;
@@ -195,8 +195,10 @@ export default function Home() {
   const [floor, setFloor] = useState(3);
   const [showAllExtras, setShowAllExtras] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<Record<string, number>>({});
-  const [query, setQuery] = useState("");
+  const [globalQuery, setGlobalQuery] = useState("");
+  const [feeQuery, setFeeQuery] = useState("");
   const [feeFilter, setFeeFilter] = useState("全部");
+  const [showAllFees, setShowAllFees] = useState(false);
 
   const currentList = productCategory === "電視" ? products.filter((item) => item.category === "電視")
     : productCategory === "冰箱" ? products.filter((item) => item.category === "冰箱")
@@ -268,8 +270,40 @@ export default function Home() {
   const filterOptions = ["全部", ...Array.from(new Set(allFees.map((item) => item.category)))];
   const filteredFees = allFees.filter((item) => {
     const haystack = `${item.category}${item.name}${item.note ?? ""}`.toLowerCase();
-    return (feeFilter === "全部" || item.category === feeFilter) && haystack.includes(query.toLowerCase());
+    return (feeFilter === "全部" || item.category === feeFilter) && haystack.includes(feeQuery.toLowerCase());
   });
+  const feeLimit = showAllFees || feeQuery || feeFilter !== "全部" ? 80 : 12;
+
+  const normalizedGlobalQuery = globalQuery.trim().toLowerCase();
+  const globalResults = normalizedGlobalQuery ? [
+    ...orderableItems.map((item) => ({
+      kind: "商品" as const,
+      id: item.id,
+      title: item.name,
+      meta: item.category,
+      price: item.price,
+      value: item.id,
+      searchText: `${item.category}${item.name}${item.note ?? ""}`.toLowerCase(),
+    })),
+    ...areaOptions.map((option) => ({
+      kind: "地區" as const,
+      id: `area-${option.value}`,
+      title: option.place,
+      meta: "跨區配送",
+      price: option.fee,
+      value: option.value,
+      searchText: `${option.place}跨區配送`.toLowerCase(),
+    })),
+    ...extras.map((item) => ({
+      kind: "施工" as const,
+      id: `extra-${item.id}`,
+      title: item.name,
+      meta: item.category,
+      price: item.price,
+      value: item.id,
+      searchText: `${item.category}${item.name}${item.note ?? ""}`.toLowerCase(),
+    })),
+  ].filter((result) => result.searchText.includes(normalizedGlobalQuery)).slice(0, 8) : [];
 
   const setExtra = (id: string, value: number) => {
     setSelectedExtras((prev) => {
@@ -287,6 +321,33 @@ export default function Home() {
 
   const addQuickItem = (id: string) => {
     setCart((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
+  };
+
+  const goToCalculator = () => {
+    window.setTimeout(() => document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" }), 0);
+  };
+
+  const useGlobalResult = (result: (typeof globalResults)[number]) => {
+    if (result.kind === "商品") {
+      const item = orderableItems.find((entry) => entry.id === result.value);
+      if (!item) return;
+      const nextCategory: ProductCategory = item.category === "電視" ? "電視"
+        : item.category === "冰箱" ? "冰箱"
+        : item.category === "洗衣" ? "洗衣機"
+        : item.category === "小型家電" ? "小家電"
+        : item.category === "影音" ? "影音"
+        : "冷氣";
+      setProductCategory(nextCategory);
+      selectProduct(item.id);
+      addQuickItem(item.id);
+    } else if (result.kind === "地區") {
+      setArea(result.value);
+    } else {
+      setShowAllExtras(true);
+      if (result.price !== null) setExtra(result.value, 1);
+    }
+    setGlobalQuery("");
+    goToCalculator();
   };
 
   const setCartQuantity = (id: string, value: number) => {
@@ -324,6 +385,38 @@ export default function Home() {
           <p className="hero-lead">
             常用商品一鍵加入，選鄉鎮、選樓層，就能看到同一地址的配送安裝總額。
           </p>
+          <div className="universal-search-wrap">
+            <label className="universal-search">
+              <span aria-hidden="true">⌕</span>
+              <input
+                value={globalQuery}
+                onChange={(event) => setGlobalQuery(event.target.value)}
+                placeholder="搜尋商品、地區或施工項目"
+                aria-label="萬用搜尋"
+                aria-expanded={globalResults.length > 0}
+                autoComplete="off"
+              />
+              {globalQuery && <button type="button" onClick={() => setGlobalQuery("")} aria-label="清除搜尋">×</button>}
+            </label>
+            {globalQuery && (
+              <div className="universal-results" role="listbox" aria-label="萬用搜尋結果">
+                {globalResults.length > 0 ? globalResults.map((result) => (
+                  <button key={`${result.kind}-${result.id}`} type="button" onClick={() => useGlobalResult(result)} role="option">
+                    <span className={`result-kind kind-${result.kind}`}>{result.kind}</span>
+                    <span className="result-copy"><b>{result.title}</b><small>{result.meta}</small></span>
+                    <span className="result-price">{result.price === null ? "另議" : money(result.price)}</span>
+                    <span className="result-action">{result.kind === "商品" ? "加入" : result.kind === "地區" ? "帶入" : "選取"} →</span>
+                  </button>
+                )) : <p>找不到符合項目，試試「冰箱」、「楠梓」或「銅管」。</p>}
+              </div>
+            )}
+            <div className="search-shortcuts" aria-label="熱門搜尋">
+              <span>熱門：</span>
+              {["冰箱", "分離式", "楠梓", "壁掛"].map((word) => (
+                <button key={word} type="button" onClick={() => setGlobalQuery(word)}>{word}</button>
+              ))}
+            </div>
+          </div>
           <div className="hero-actions">
             <a className="primary-button" href="#calculator">開始計算 <span>↓</span></a>
             <a className="text-link" href="#fees">先看完整價目 →</a>
@@ -534,7 +627,7 @@ export default function Home() {
         <div className="fee-toolbar">
           <label className="search-box">
             <span aria-hidden="true">⌕</span>
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜尋：銅管、冰箱、壁掛…" aria-label="搜尋價目" />
+            <input value={feeQuery} onChange={(e) => setFeeQuery(e.target.value)} placeholder="搜尋完整價目：銅管、冰箱、壁掛…" aria-label="搜尋完整價目" />
           </label>
         </div>
         <div className="filter-row" aria-label="價目分類">
@@ -544,7 +637,7 @@ export default function Home() {
         </div>
         <div className="fee-list">
           <div className="fee-list-head"><span>類別／項目</span><span>單價（含稅）</span></div>
-          {filteredFees.slice(0, 80).map((item) => {
+          {filteredFees.slice(0, feeLimit).map((item) => {
             const group = wallGroup(item);
             return (
               <article className={`fee-row${group ? ` wall-row wall-${group}` : ""}`} key={`fee-${item.id}`}>
@@ -555,8 +648,13 @@ export default function Home() {
             );
           })}
           {filteredFees.length === 0 && <p className="empty-state">找不到符合的項目，請換個關鍵字。</p>}
-          {filteredFees.length > 80 && <p className="list-note">共 {filteredFees.length} 筆，請使用搜尋或分類縮小範圍。</p>}
+          {filteredFees.length > feeLimit && feeLimit === 80 && <p className="list-note">共 {filteredFees.length} 筆，請使用搜尋或分類縮小範圍。</p>}
         </div>
+        {!feeQuery && feeFilter === "全部" && filteredFees.length > 12 && (
+          <button className="show-all-fees" type="button" onClick={() => setShowAllFees((value) => !value)}>
+            {showAllFees ? "收起完整價目" : `展開全部 ${filteredFees.length} 筆價目`}
+          </button>
+        )}
       </section>
 
       <section className="area-section">
