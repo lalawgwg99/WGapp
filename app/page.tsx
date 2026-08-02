@@ -139,8 +139,8 @@ const extras: FeeItem[] = [
 
 const areaFees: Record<string, { price: number | null; places: string }> = {
   "0": { price: 0, places: "高雄市（舊）、鳳山市、大寮" },
-  "100": { price: 100, places: "橋頭、旗津" },
-  "200": { price: 200, places: "林園、九曲堂、彌陀、大樹、燕巢、梓官、岡山、楠梓、大社" },
+  "100": { price: 100, places: "楠梓、旗津" },
+  "200": { price: 200, places: "橋頭、林園、九曲堂、彌陀、大樹、燕巢、梓官、岡山、大社" },
   "300": { price: 300, places: "屏東市、萬丹、新園、路竹、永安" },
   "400": { price: 400, places: "田寮、中寮、麟洛、竹田、崁頂、東港" },
   "500": { price: 500, places: "內門、旗山、阿蓮、湖內、大湖、高樹、里港、九如、林邊" },
@@ -148,8 +148,8 @@ const areaFees: Record<string, { price: number | null; places: string }> = {
   "700": { price: 700, places: "甲仙、六龜、三地門、鹽埔、萬巒" },
   "800": { price: 800, places: "涼山、佳平、來義、佳冬" },
   "900": { price: 900, places: "枋寮" },
-  "1000": { price: 1000, places: "三民、桃源、茂林、霧台、枋山、牡丹、車城、恆春" },
-  "1200": { price: null, places: "滿州" },
+  "1500": { price: 1500, places: "三民、桃源、茂林、霧台、枋山、牡丹、車城、恆春" },
+  "2000": { price: 2000, places: "滿洲" },
 };
 
 const money = (value: number) => `NT$ ${value.toLocaleString("zh-TW")}`;
