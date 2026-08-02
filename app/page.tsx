@@ -158,6 +158,15 @@ const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) =>
   })),
 );
 const quickProductIds = ["tv55", "washer12", "fridge399", "split36", "window32"];
+type ProductCategory = "電視" | "冰箱" | "洗衣機" | "冷氣" | "小家電" | "影音";
+const productCategories: Array<{ id: ProductCategory; hint: string }> = [
+  { id: "電視", hint: "尺寸" },
+  { id: "冰箱", hint: "容量" },
+  { id: "洗衣機", hint: "公斤數" },
+  { id: "冷氣", hint: "分離／窗型" },
+  { id: "小家電", hint: "運送安裝" },
+  { id: "影音", hint: "劇院／卡拉 OK" },
+];
 const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
   appliance: ["door", "fridge-door", "washer-head-single", "washer-head-double", "tv-wall59", "tv-existing"],
   split: ["ac-remove11", "pipe23", "duct80", "hole25", "galv-small", "socket"],
@@ -166,6 +175,7 @@ const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
 
 export default function Home() {
   const [mode, setMode] = useState<"appliance" | "split" | "window">("appliance");
+  const [productCategory, setProductCategory] = useState<ProductCategory>("電視");
   const [productId, setProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState<Record<string, number>>({});
@@ -177,13 +187,31 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [feeFilter, setFeeFilter] = useState("全部");
 
-  const currentList = mode === "appliance" ? products : mode === "split" ? splitAC : windowAC;
+  const currentList = productCategory === "電視" ? products.filter((item) => item.category === "電視")
+    : productCategory === "冰箱" ? products.filter((item) => item.category === "冰箱")
+    : productCategory === "洗衣機" ? products.filter((item) => item.category === "洗衣")
+    : productCategory === "小家電" ? products.filter((item) => item.category === "小型家電")
+    : productCategory === "影音" ? products.filter((item) => item.category === "影音")
+    : [...splitAC, ...windowAC];
   const current = currentList.find((item) => item.id === productId) ?? currentList[0];
 
-  const switchMode = (next: typeof mode) => {
-    const list = next === "appliance" ? products : next === "split" ? splitAC : windowAC;
-    setMode(next);
+  const switchCategory = (next: ProductCategory) => {
+    const list = next === "電視" ? products.filter((item) => item.category === "電視")
+      : next === "冰箱" ? products.filter((item) => item.category === "冰箱")
+      : next === "洗衣機" ? products.filter((item) => item.category === "洗衣")
+      : next === "小家電" ? products.filter((item) => item.category === "小型家電")
+      : next === "影音" ? products.filter((item) => item.category === "影音")
+      : [...splitAC, ...windowAC];
+    setProductCategory(next);
+    setMode(next === "冷氣" ? "split" : "appliance");
     setProductId(list[0].id);
+  };
+
+  const selectProduct = (id: string) => {
+    setProductId(id);
+    if (splitAC.some((item) => item.id === id)) setMode("split");
+    else if (windowAC.some((item) => item.id === id)) setMode("window");
+    else setMode("appliance");
   };
 
   const extraTotal = Object.entries(selectedExtras).reduce((sum, [id, qty]) => {
@@ -316,20 +344,16 @@ export default function Home() {
           <p>加入商品、選配送條件、需要時再加施工項目。跨區費整張同址訂單只計一次。</p>
         </div>
 
-        <div className="mode-tabs" role="tablist" aria-label="選擇試算類型">
-          {[
-            ["appliance", "大型／小型家電", "電視、洗衣機、冰箱"],
-            ["split", "分離式冷氣", "1 對 1、1 對多"],
-            ["window", "窗型／移動式冷氣", "含直立式"],
-          ].map(([value, label, hint]) => (
+        <div className="category-tabs" role="tablist" aria-label="商品分類">
+          {productCategories.map((category) => (
             <button
-              key={value}
-              className={mode === value ? "mode-tab active" : "mode-tab"}
-              onClick={() => switchMode(value as typeof mode)}
+              key={category.id}
+              className={productCategory === category.id ? "category-tab active" : "category-tab"}
+              onClick={() => switchCategory(category.id)}
               role="tab"
-              aria-selected={mode === value}
+              aria-selected={productCategory === category.id}
             >
-              <span>{label}</span><small>{hint}</small>
+              <span>{category.id}</span><small>{category.hint}</small>
             </button>
           ))}
         </div>
@@ -354,9 +378,22 @@ export default function Home() {
               </div>
               <div className="field-grid add-grid">
                 <label className="field wide">
-                  <span>商品或安裝規格</span>
-                  <select value={productId} onChange={(e) => setProductId(e.target.value)}>
-                    {currentList.map((item) => <option key={item.id} value={item.id}>{item.name} — {money(item.price ?? 0)}</option>)}
+                  <span>{productCategory}規格</span>
+                  <select value={productId} onChange={(e) => selectProduct(e.target.value)}>
+                    {productCategory === "冷氣" ? (
+                      <>
+                        <optgroup label="分離式冷氣">
+                          {splitAC.map((item) => <option key={item.id} value={item.id}>{item.name} — {money(item.price ?? 0)}</option>)}
+                        </optgroup>
+                        <optgroup label="窗型／直立式／移動式冷氣">
+                          {windowAC.map((item) => <option key={item.id} value={item.id}>{item.name} — {money(item.price ?? 0)}</option>)}
+                        </optgroup>
+                      </>
+                    ) : (
+                      <optgroup label={productCategory}>
+                        {currentList.map((item) => <option key={item.id} value={item.id}>{item.name} — {money(item.price ?? 0)}</option>)}
+                      </optgroup>
+                    )}
                   </select>
                 </label>
                 <label className="field">

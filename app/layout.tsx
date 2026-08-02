@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "同址混搭，一次合計｜配送安裝費試算",
     description: "同一地址混搭多種家電，快速合計配送、跨區、樓層與冷氣安裝費用。",
-    images: [{ url: "/og-v2.png", width: 1200, height: 630 }],
+    images: [{ url: "/og-v3.png", width: 1200, height: 630 }],
     locale: "zh_TW",
     type: "website",
   },
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "同址混搭，一次合計｜配送安裝費試算",
     description: "同一地址混搭多種家電，快速合計配送、跨區、樓層與冷氣安裝費用。",
-    images: ["/og-v2.png"],
+    images: ["/og-v3.png"],
   },
 };
 
