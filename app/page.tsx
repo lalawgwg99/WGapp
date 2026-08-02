@@ -137,7 +137,7 @@ const extras: FeeItem[] = [
   { id: "steel-window", category: "冷氣共用", name: "剪不鏽鋼窗", price: 600, unit: "窗" },
 ];
 
-const areaFees: Record<string, { price: number; places: string }> = {
+const areaFees: Record<string, { price: number | null; places: string }> = {
   "0": { price: 0, places: "高雄市（舊）、鳳山市、大寮" },
   "100": { price: 100, places: "橋頭、旗津" },
   "200": { price: 200, places: "林園、九曲堂、彌陀、大樹、燕巢、梓官、岡山、楠梓、大社" },
@@ -149,7 +149,7 @@ const areaFees: Record<string, { price: number; places: string }> = {
   "800": { price: 800, places: "涼山、佳平、來義、佳冬" },
   "900": { price: 900, places: "枋寮" },
   "1000": { price: 1000, places: "三民、桃源、茂林、霧台、枋山、牡丹、車城、恆春" },
-  "1200": { price: 1200, places: "滿州" },
+  "1200": { price: null, places: "滿州" },
 };
 
 const money = (value: number) => `NT$ ${value.toLocaleString("zh-TW")}`;
@@ -164,7 +164,7 @@ const wallGroupLabel = (group: ReturnType<typeof wallGroup>) => group === "own" 
 const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) =>
   info.places.split("、").map((place) => ({
     value: `${fee}:${place}`,
-    fee: Number(fee),
+    fee: info.price,
     place,
   })),
 );
@@ -256,7 +256,7 @@ export default function Home() {
   const availableExtras = showAllExtras ? sortedExtras : sortedExtras.slice(0, 6);
   const baseTotal = cartRows.reduce((sum, row) => sum + (row.item.price ?? 0) * row.qty, 0);
   const selectedArea = areaOptions.find((option) => option.value === area) ?? areaOptions[0];
-  const areaTotal = cartRows.length ? selectedArea.fee : 0;
+  const areaTotal = cartRows.length ? (selectedArea.fee ?? 0) : 0;
   const stairUnits = noElevator ? Math.max(0, floor - 2) : 0;
   const stairTotal = cartRows.reduce(
     (sum, row) => sum + (row.item.stairRate ?? 0) * stairUnits * row.qty,
@@ -444,7 +444,7 @@ export default function Home() {
                   <span>鄉鎮／區域</span>
                   <select value={area} onChange={(e) => setArea(e.target.value)}>
                     {areaOptions.map((option) => (
-                      <option key={option.value} value={option.value}>{option.place}｜跨區費 +{money(option.fee)}</option>
+                      <option key={option.value} value={option.value}>{option.place}｜跨區費 {option.fee === null ? "另議" : `+${money(option.fee)}`}</option>
                     ))}
                   </select>
                 </label>
@@ -464,7 +464,7 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              <p className="condition-summary">送至 <b>{selectedArea.place}</b> · 跨區費 {money(selectedArea.fee)} · {noElevator ? `無電梯 ${floor} 樓` : "有電梯或免樓層費"}</p>
+              <p className="condition-summary">送至 <b>{selectedArea.place}</b> · 跨區費 {selectedArea.fee === null ? "另議" : money(selectedArea.fee)} · {noElevator ? `無電梯 ${floor} 樓` : "有電梯或免樓層費"}</p>
             </div>
 
             <div className="step-block">
@@ -508,7 +508,7 @@ export default function Home() {
                 <div key={`summary-${item.id}`}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
               ))}
               {cartRows.length > 0 && <div className="summary-subtotal"><span>商品基本費小計</span><b>{money(baseTotal)}</b></div>}
-              {cartRows.length > 0 && <div><span>{selectedArea.place}跨區費（同址一次）</span><b>{money(areaTotal)}</b></div>}
+              {cartRows.length > 0 && <div><span>{selectedArea.place}跨區費（同址一次）</span><b>{selectedArea.fee === null ? "另議" : money(areaTotal)}</b></div>}
               {stairTotal > 0 && <div><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
               {selectedExtraRows.map(({ item, qty }) => (
                 <div key={item.id}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
@@ -569,7 +569,7 @@ export default function Home() {
         <div className="area-table">
           {Object.entries(areaFees).map(([key, info]) => (
             <div key={key}>
-              <strong>+{money(info.price)}</strong>
+              <strong>{info.price === null ? "另議" : `+${money(info.price)}`}</strong>
               <span>{info.places}</span>
             </div>
           ))}
