@@ -20,7 +20,6 @@ const products: FeeItem[] = [
   { id: "tv60", category: "電視", name: "液晶電視 60–74 吋", price: 700, unit: "台", stairRate: 100 },
   { id: "tv75", category: "電視", name: "液晶電視 75 吋（含）以上", price: 1300, unit: "台", stairRate: 100 },
   { id: "theater-delivery", category: "影音", name: "家庭劇院／卡拉 OK｜只送不裝", price: 300, unit: "組", note: "含拆箱、定位、測試" },
-  { id: "theater-install", category: "影音", name: "家庭劇院／卡拉 OK｜運送含基本安裝", price: 500, unit: "組", note: "含 15 米 50 蕊紅黑喇叭線" },
   { id: "washer12", category: "洗衣", name: "洗衣機 12.5 公斤（含）以下", price: 300, unit: "台", stairRate: 50 },
   { id: "washer18", category: "洗衣", name: "洗衣機 13–18 公斤（含）", price: 400, unit: "台", stairRate: 100 },
   { id: "washer19", category: "洗衣", name: "洗衣機 19 公斤（含）以上", price: 500, unit: "台", stairRate: 100 },
@@ -44,8 +43,6 @@ const products: FeeItem[] = [
   { id: "styler", category: "冰箱", name: "電子衣櫥", price: 600, unit: "台" },
   { id: "hood", category: "小型家電", name: "排油煙機／瓦斯爐／熱水器", price: 300, unit: "件", note: "運送、拆箱，不含安裝" },
   { id: "drybox", category: "小型家電", name: "電子防潮箱", price: 300, unit: "件", note: "運送、拆箱，不含安裝" },
-  { id: "toilet", category: "小型家電", name: "電腦馬桶座", price: 500, unit: "台", note: "使用包裝內配件之基本安裝" },
-  { id: "fan", category: "小型家電", name: "輕鋼架循環扇", price: 600, unit: "台", note: "接電源，附 3 米內電源線" },
   { id: "small-appliance", category: "小型家電", name: "水冷扇／除濕機／烘碗機等", price: 300, unit: "件", note: "運送、拆箱、定位，不含安裝" },
 ];
 
@@ -73,8 +70,6 @@ const extras: FeeItem[] = [
   { id: "door", category: "一般加項", name: "拆卸大門／室內門／過窗", price: 200, unit: "次" },
   { id: "fridge-door", category: "一般加項", name: "冰箱門拆裝（兩片門板）", price: 300, unit: "台", note: "每超出一片加收 150 元" },
   { id: "ice-filter", category: "一般加項", name: "對開冰箱製冰過濾器安裝", price: 1200, unit: "台" },
-  { id: "washer-head-single", category: "一般加項", name: "洗衣機單頭", price: 400, unit: "組" },
-  { id: "washer-head-double", category: "一般加項", name: "洗衣機雙頭", price: 500, unit: "組" },
   { id: "washer-stack", category: "一般加項", name: "滾筒洗衣機堆疊免曬衣乾衣機", price: 2000, unit: "組" },
   { id: "tv-own-fixed42", category: "電視安裝", name: "自備架｜平面固定式｜42 吋以下", price: 800, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
   { id: "tv-own-fixed59", category: "電視安裝", name: "自備架｜平面固定式｜43–59 吋", price: 1000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
@@ -95,9 +90,6 @@ const extras: FeeItem[] = [
   { id: "cable", category: "電視安裝", name: "室內 CABLE 線（超過 3 米）", price: 30, unit: "米" },
   { id: "antenna", category: "電視安裝", name: "一般 UHF／VHF 室外天線（五樓以下）", price: 1500, unit: "組" },
   { id: "digital-antenna", category: "電視安裝", name: "數位 UHF 室外天線（五樓以下）", price: 1200, unit: "組", note: "不含數位機上盒" },
-  { id: "speaker-small", category: "影音安裝", name: "小型環繞喇叭壁掛施工", price: 1000, unit: "對", note: "含壁掛架" },
-  { id: "speaker-large", category: "影音安裝", name: "中大型環繞喇叭壁掛施工", price: 1500, unit: "對", note: "含懸吊架" },
-  { id: "speaker-wire", category: "影音安裝", name: "50 蕊紅黑喇叭線（超過 15 米）", price: 30, unit: "米" },
   { id: "ac-remove11", category: "分離式冷氣", name: "分離式拆舊機｜1 對 1", price: 1000, unit: "組", note: "危險施工另計；舊機回收不收費" },
   { id: "ac-remove12", category: "分離式冷氣", name: "分離式拆舊機｜1 對 2", price: 1500, unit: "組", note: "危險施工另計；舊機回收不收費" },
   { id: "pipe23", category: "分離式冷氣", name: "被覆銅管延長｜2”3”", price: 400, unit: "公尺", note: "限用 8mm 以上厚度" },
@@ -179,7 +171,7 @@ const productCategories: Array<{ id: ProductCategory; hint: string }> = [
   { id: "影音", hint: "劇院／卡拉 OK" },
 ];
 const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
-  appliance: ["door", "fridge-door", "washer-head-single", "washer-head-double", "tv-own-fixed59", "tv-existing"],
+  appliance: ["door", "fridge-door", "washer-stack", "tv-own-fixed59", "tv-existing"],
   split: ["ac-remove11", "pipe23", "duct80", "hole25", "galv-small", "socket"],
   window: ["window-frame", "window-hang", "window-cover", "socket", "awning-small", "iron-hollow"],
 };
