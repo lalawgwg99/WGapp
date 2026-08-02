@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 type FeeItem = {
   id: string;
@@ -150,14 +150,29 @@ const areaFees: Record<string, { price: number; places: string }> = {
 };
 
 const money = (value: number) => `NT$ ${value.toLocaleString("zh-TW")}`;
+const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) =>
+  info.places.split("、").map((place) => ({
+    value: `${fee}:${place}`,
+    fee: Number(fee),
+    place,
+  })),
+);
+const quickProductIds = ["tv55", "washer12", "fridge399", "split36", "window32"];
+const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
+  appliance: ["door", "fridge-door", "washer-head-single", "washer-head-double", "tv-wall59", "tv-existing"],
+  split: ["ac-remove11", "pipe23", "duct80", "hole25", "galv-small", "socket"],
+  window: ["window-frame", "window-hang", "window-cover", "socket", "awning-small", "iron-hollow"],
+};
 
 export default function Home() {
   const [mode, setMode] = useState<"appliance" | "split" | "window">("appliance");
   const [productId, setProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState<Record<string, number>>({});
-  const [area, setArea] = useState("0");
-  const [stairUnits, setStairUnits] = useState(0);
+  const [area, setArea] = useState(areaOptions[0].value);
+  const [noElevator, setNoElevator] = useState(false);
+  const [floor, setFloor] = useState(3);
+  const [showAllExtras, setShowAllExtras] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<Record<string, number>>({});
   const [query, setQuery] = useState("");
   const [feeFilter, setFeeFilter] = useState("全部");
@@ -171,12 +186,6 @@ export default function Home() {
     setProductId(list[0].id);
   };
 
-  const availableExtras = useMemo(() => {
-    if (mode === "split") return extras.filter((item) => ["分離式冷氣", "冷氣共用"].includes(item.category));
-    if (mode === "window") return extras.filter((item) => ["窗型冷氣", "冷氣共用"].includes(item.category));
-    return extras.filter((item) => ["一般加項", "電視安裝", "影音安裝"].includes(item.category));
-  }, [mode]);
-
   const extraTotal = Object.entries(selectedExtras).reduce((sum, [id, qty]) => {
     const fee = extras.find((item) => item.id === id);
     return sum + (fee?.price ?? 0) * qty;
@@ -185,8 +194,31 @@ export default function Home() {
   const cartRows = Object.entries(cart)
     .map(([id, qty]) => ({ item: orderableItems.find((entry) => entry.id === id), qty }))
     .filter((row): row is { item: FeeItem; qty: number } => Boolean(row.item));
+  const cartHasSplit = cartRows.some((row) => splitAC.some((item) => item.id === row.item.id));
+  const cartHasWindow = cartRows.some((row) => windowAC.some((item) => item.id === row.item.id));
+  const cartHasAppliance = cartRows.some((row) => products.some((item) => item.id === row.item.id));
+  const extraCategories = new Set<string>();
+  if (mode === "appliance" || cartHasAppliance) ["一般加項", "電視安裝", "影音安裝"].forEach((value) => extraCategories.add(value));
+  if (mode === "split" || cartHasSplit) ["分離式冷氣", "冷氣共用"].forEach((value) => extraCategories.add(value));
+  if (mode === "window" || cartHasWindow) ["窗型冷氣", "冷氣共用"].forEach((value) => extraCategories.add(value));
+  const relevantExtras = extras.filter((item) => extraCategories.has(item.category));
+  const preferredIds = Array.from(new Set([
+    ...Object.keys(selectedExtras),
+    ...preferredExtras[mode],
+    ...(cartHasAppliance ? preferredExtras.appliance : []),
+    ...(cartHasSplit ? preferredExtras.split : []),
+    ...(cartHasWindow ? preferredExtras.window : []),
+  ]));
+  const sortedExtras = [...relevantExtras].sort((a, b) => {
+    const aIndex = preferredIds.indexOf(a.id);
+    const bIndex = preferredIds.indexOf(b.id);
+    return (aIndex < 0 ? 999 : aIndex) - (bIndex < 0 ? 999 : bIndex);
+  });
+  const availableExtras = showAllExtras ? sortedExtras : sortedExtras.slice(0, 6);
   const baseTotal = cartRows.reduce((sum, row) => sum + (row.item.price ?? 0) * row.qty, 0);
-  const areaTotal = cartRows.length ? (areaFees[area]?.price ?? 0) : 0;
+  const selectedArea = areaOptions.find((option) => option.value === area) ?? areaOptions[0];
+  const areaTotal = cartRows.length ? selectedArea.fee : 0;
+  const stairUnits = noElevator ? Math.max(0, floor - 2) : 0;
   const stairTotal = cartRows.reduce(
     (sum, row) => sum + (row.item.stairRate ?? 0) * stairUnits * row.qty,
     0,
@@ -212,6 +244,10 @@ export default function Home() {
   const addToCart = () => {
     setCart((prev) => ({ ...prev, [current.id]: (prev[current.id] ?? 0) + quantity }));
     setQuantity(1);
+  };
+
+  const addQuickItem = (id: string) => {
+    setCart((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
   };
 
   const setCartQuantity = (id: string, value: number) => {
@@ -245,9 +281,9 @@ export default function Home() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow"><span /> 五甲店 · 新臺幣含稅</p>
-          <h1>配送安裝費，<br /><em>一眼看懂。</em></h1>
+          <h1>多樣商品，<br /><em>一次算清。</em></h1>
           <p className="hero-lead">
-            同一地址可混搭多種商品，逐項加入後一次合計運送、樓層與施工費。把八頁密集價目表，整理成現場也能快速使用的工具。
+            常用商品一鍵加入，選鄉鎮、選樓層，就能看到同一地址的配送安裝總額。
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#calculator">開始計算 <span>↓</span></a>
@@ -276,8 +312,8 @@ export default function Home() {
       <section className="calculator-section" id="calculator">
         <div className="section-heading light-heading">
           <p className="eyebrow"><span /> 費用試算器</p>
-          <h2>同址混搭，一次合計</h2>
-          <p>先把所有商品加入清單，再設定同一配送地址與施工加項。跨區費整張訂單只計一次。</p>
+          <h2>三步，整張訂單算完</h2>
+          <p>加入商品、選配送條件、需要時再加施工項目。跨區費整張同址訂單只計一次。</p>
         </div>
 
         <div className="mode-tabs" role="tablist" aria-label="選擇試算類型">
@@ -302,6 +338,20 @@ export default function Home() {
           <div className="calculator-form">
             <div className="step-block">
               <div className="step-title"><b>01</b><div><h3>建立商品清單</h3><p>不同類型可連續加入，同品項會自動合併數量</p></div></div>
+              <div className="quick-adds" aria-label="常用商品快速加入">
+                <span>常用</span>
+                {quickProductIds.map((id) => {
+                  const item = orderableItems.find((entry) => entry.id === id)!;
+                  const shortName: Record<string, string> = {
+                    tv55: "55–59 吋電視",
+                    washer12: "12.5kg 洗衣機",
+                    fridge399: "300–399L 冰箱",
+                    split36: "3.6kW 分離式",
+                    window32: "3.2kW 窗型",
+                  };
+                  return <button key={id} onClick={() => addQuickItem(id)}>＋ {shortName[id]} <small>{money(item.price ?? 0)}</small></button>;
+                })}
+              </div>
               <div className="field-grid add-grid">
                 <label className="field wide">
                   <span>商品或安裝規格</span>
@@ -340,32 +390,37 @@ export default function Home() {
             </div>
 
             <div className="step-block">
-              <div className="step-title"><b>02</b><div><h3>配送條件</h3><p>跨區與無電梯樓層</p></div></div>
+              <div className="step-title"><b>02</b><div><h3>配送到哪裡</h3><p>直接選鄉鎮與實際樓層，系統自動換算</p></div></div>
               <div className="field-grid two">
                 <label className="field">
-                  <span>配送地區</span>
+                  <span>鄉鎮／區域</span>
                   <select value={area} onChange={(e) => setArea(e.target.value)}>
-                    {Object.entries(areaFees).map(([key, info]) => (
-                      <option key={key} value={key}>{info.places}｜+{money(info.price)}</option>
+                    {areaOptions.map((option) => (
+                      <option key={option.value} value={option.value}>{option.place}｜跨區費 +{money(option.fee)}</option>
                     ))}
                   </select>
                 </label>
-                <label className="field">
-                  <span>無電梯搬運計費層數</span>
-                  <div className="stepper">
-                    <button onClick={() => setStairUnits(Math.max(0, stairUnits - 1))} aria-label="減少計費層數">−</button>
-                    <input aria-label="無電梯搬運計費層數" min="0" type="number" value={stairUnits} onChange={(e) => setStairUnits(Math.max(0, Number(e.target.value) || 0))} />
-                    <button onClick={() => setStairUnits(stairUnits + 1)} aria-label="增加計費層數">＋</button>
+                <div className="field">
+                  <span>搬運方式</span>
+                  <div className="delivery-switch" role="group" aria-label="搬運方式">
+                    <button className={!noElevator ? "active" : ""} onClick={() => setNoElevator(false)}>有電梯／免計</button>
+                    <button className={noElevator ? "active" : ""} onClick={() => setNoElevator(true)}>無電梯</button>
                   </div>
-                  <small className="field-help">
-                    系統依清單內每件商品的級距分別計算；三樓（含）以上適用
-                  </small>
-                </label>
+                  {noElevator && (
+                    <label className="floor-select">
+                      <span>送達</span>
+                      <select value={floor} onChange={(e) => setFloor(Number(e.target.value))}>
+                        {[3,4,5,6,7,8,9,10].map((value) => <option key={value} value={value}>{value} 樓</option>)}
+                      </select>
+                    </label>
+                  )}
+                </div>
               </div>
+              <p className="condition-summary">送至 <b>{selectedArea.place}</b> · 跨區費 {money(selectedArea.fee)} · {noElevator ? `無電梯 ${floor} 樓` : "有電梯或免樓層費"}</p>
             </div>
 
             <div className="step-block">
-              <div className="step-title"><b>03</b><div><h3>施工加項</h3><p>點選需要的項目與數量</p></div></div>
+              <div className="step-title"><b>03</b><div><h3>需要加做嗎？</h3><p>可以略過；先顯示最常用的 6 項</p></div></div>
               <div className="extras-grid">
                 {availableExtras.map((item) => {
                   const qty = selectedExtras[item.id] ?? 0;
@@ -386,10 +441,15 @@ export default function Home() {
                   );
                 })}
               </div>
+              {sortedExtras.length > 6 && (
+                <button className="more-extras" onClick={() => setShowAllExtras((value) => !value)}>
+                  {showAllExtras ? "收起其他加項" : `查看其他 ${sortedExtras.length - 6} 項`}
+                </button>
+              )}
             </div>
           </div>
 
-          <aside className="estimate-card" aria-live="polite">
+          <aside className="estimate-card" id="estimate" aria-live="polite">
             <div className="estimate-label"><span className="live-dot">試算結果</span><small>價格含稅</small></div>
             <h3>{cartRows.length ? `同址配送｜${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品` : "先加入本次配送商品"}</h3>
             <div className="estimate-total"><small>預估合計</small><strong>{money(total)}</strong></div>
@@ -398,7 +458,7 @@ export default function Home() {
                 <div key={`summary-${item.id}`}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
               ))}
               {cartRows.length > 0 && <div className="summary-subtotal"><span>商品基本費小計</span><b>{money(baseTotal)}</b></div>}
-              {cartRows.length > 0 && <div><span>跨區費（同址計一次）</span><b>{money(areaTotal)}</b></div>}
+              {cartRows.length > 0 && <div><span>{selectedArea.place}跨區費（同址一次）</span><b>{money(areaTotal)}</b></div>}
               {stairTotal > 0 && <div><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
               {selectedExtraRows.map(({ item, qty }) => (
                 <div key={item.id}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
@@ -406,11 +466,19 @@ export default function Home() {
             </div>
             <div className="estimate-footer">
               <p><b>同址混搭計價提醒</b><br />本工具先按各品項標準費率加總；同車次的非四機優惠、贈品與特殊組合，請再由門市確認。</p>
-              <button onClick={() => { setCart({}); setQuantity(1); setArea("0"); setStairUnits(0); setSelectedExtras({}); }}>清空整張訂單</button>
+              <button onClick={() => { setCart({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); }}>清空整張訂單</button>
             </div>
           </aside>
         </div>
       </section>
+
+      {cartRows.length > 0 && (
+        <a className="mobile-total" href="#estimate">
+          <span>{cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品</span>
+          <b>{money(total)}</b>
+          <em>看明細 ↑</em>
+        </a>
+      )}
 
       <section className="fees-section" id="fees">
         <div className="section-heading">
