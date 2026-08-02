@@ -76,11 +76,22 @@ const extras: FeeItem[] = [
   { id: "washer-head-single", category: "一般加項", name: "洗衣機單頭", price: 400, unit: "組" },
   { id: "washer-head-double", category: "一般加項", name: "洗衣機雙頭", price: 500, unit: "組" },
   { id: "washer-stack", category: "一般加項", name: "滾筒洗衣機堆疊免曬衣乾衣機", price: 2000, unit: "組" },
-  { id: "tv-wall42", category: "電視安裝", name: "電視壁掛施工｜42 吋（含）以下", price: 800, unit: "台", note: "不含壁掛架" },
-  { id: "tv-wall59", category: "電視安裝", name: "電視壁掛施工｜43–59 吋", price: 1000, unit: "台", note: "不含壁掛架" },
-  { id: "tv-wall65", category: "電視安裝", name: "電視壁掛施工｜60–65 吋", price: 1700, unit: "台", note: "不含壁掛架" },
-  { id: "tv-wall66", category: "電視安裝", name: "電視壁掛施工｜66 吋（含）以上", price: 2000, unit: "台", note: "不含壁掛架" },
-  { id: "tv-existing", category: "電視安裝", name: "已有壁掛架之電視壁掛安裝", price: 300, unit: "台" },
+  { id: "tv-own-fixed42", category: "電視安裝", name: "自備架｜平面固定式｜42 吋以下", price: 800, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-fixed59", category: "電視安裝", name: "自備架｜平面固定式｜43–59 吋", price: 1000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-fixed65", category: "電視安裝", name: "自備架｜平面固定式｜60–65 吋", price: 1700, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-fixed66", category: "電視安裝", name: "自備架｜平面固定式｜66 吋以上", price: 2000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-tilt42", category: "電視安裝", name: "自備架｜上下仰角式｜42 吋以下", price: 1100, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-tilt59", category: "電視安裝", name: "自備架｜上下仰角式｜43–59 吋", price: 1300, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-tilt65", category: "電視安裝", name: "自備架｜上下仰角式｜60–65 吋", price: 1500, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-tilt66", category: "電視安裝", name: "自備架｜上下仰角式｜66 吋以上", price: 2000, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-own-arm", category: "電視安裝", name: "自備架｜懸臂式／雙臂規格｜所有尺寸", price: 1500, unit: "台", note: "僅安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-fixed55", category: "電視安裝", name: "含架套裝｜平面固定式｜32–55 吋", price: 1500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-fixed56", category: "電視安裝", name: "含架套裝｜平面固定式｜56 吋以上", price: 2500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-tilt", category: "電視安裝", name: "含架套裝｜上下仰角式", price: null, unit: "台", note: "現場報價；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-arm69", category: "電視安裝", name: "含架套裝｜懸臂式／雙臂規格｜32–69 吋", price: 3500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-kit-arm70", category: "電視安裝", name: "含架套裝｜懸臂式／雙臂規格｜70 吋以上", price: 4500, unit: "台", note: "壁掛架＋安裝費；適用水泥牆面，特殊牆面另議" },
+  { id: "tv-existing", category: "電視安裝", name: "既有壁掛架安裝費", price: 300, unit: "台" },
+  { id: "tv-special-wall", category: "電視安裝", name: "特殊施工／洗洞｜文化石、大理石等", price: null, unit: "次", note: "使用安全合規材質，現場報價" },
   { id: "cable", category: "電視安裝", name: "室內 CABLE 線（超過 3 米）", price: 30, unit: "米" },
   { id: "antenna", category: "電視安裝", name: "一般 UHF／VHF 室外天線（五樓以下）", price: 1500, unit: "組" },
   { id: "digital-antenna", category: "電視安裝", name: "數位 UHF 室外天線（五樓以下）", price: 1200, unit: "組", note: "不含數位機上盒" },
@@ -168,7 +179,7 @@ const productCategories: Array<{ id: ProductCategory; hint: string }> = [
   { id: "影音", hint: "劇院／卡拉 OK" },
 ];
 const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
-  appliance: ["door", "fridge-door", "washer-head-single", "washer-head-double", "tv-wall59", "tv-existing"],
+  appliance: ["door", "fridge-door", "washer-head-single", "washer-head-double", "tv-own-fixed59", "tv-existing"],
   split: ["ac-remove11", "pipe23", "duct80", "hole25", "galv-small", "socket"],
   window: ["window-frame", "window-hang", "window-cover", "socket", "awning-small", "iron-hollow"],
 };
@@ -461,11 +472,12 @@ export default function Home() {
               <div className="extras-grid">
                 {availableExtras.map((item) => {
                   const qty = selectedExtras[item.id] ?? 0;
+                  const needsQuote = item.price === null;
                   return (
-                    <div className={qty > 0 ? "extra-card selected" : "extra-card"} key={item.id}>
-                      <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0}>
-                        <span className="check-mark">{qty > 0 ? "✓" : "+"}</span>
-                        <span><b>{item.name}</b><small>{money(item.price ?? 0)}／{item.unit}</small></span>
+                    <div className={`${qty > 0 ? "extra-card selected" : "extra-card"}${needsQuote ? " quote-only" : ""}`} key={item.id}>
+                      <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0} disabled={needsQuote}>
+                        <span className="check-mark">{needsQuote ? "詢" : qty > 0 ? "✓" : "+"}</span>
+                        <span><b>{item.name}</b><small>{needsQuote ? "現場報價" : `${money(item.price)}／${item.unit}`}</small></span>
                       </button>
                       {qty > 0 && (
                         <div className="mini-stepper">
