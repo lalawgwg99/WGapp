@@ -3,15 +3,71 @@
 import { useState } from "react";
 
 import { areaFees, extras, products, splitAC, windowAC, type FeeItem } from "./pricing-data";
+
 const money = (value: number) => `NT$ ${value.toLocaleString("zh-TW")}`;
+
+export type MainCategory = "全部" | "電視" | "冰箱" | "洗衣" | "冷氣" | "廚電";
+
+const mainCategoryFilters: Array<{ id: MainCategory; label: string; icon: string }> = [
+  { id: "全部", label: "全部項目", icon: "📋" },
+  { id: "電視", label: "電視與壁掛影音", icon: "📺" },
+  { id: "冰箱", label: "冰箱與冷凍櫃", icon: "❄️" },
+  { id: "洗衣", label: "洗衣機與乾衣機", icon: "🧺" },
+  { id: "冷氣", label: "冷氣空調與施工", icon: "🌬️" },
+  { id: "廚電", label: "生活與廚房家電", icon: "🔌" },
+];
+
+const getItemMainCategory = (item: FeeItem): MainCategory => {
+  if (item.category === "電視" || item.category === "電視壁掛" || item.category === "電視安裝" || item.category === "影音") return "電視";
+  if (item.category === "冰箱" || item.id === "fridge-door" || item.id === "door") return "冰箱";
+  if (item.category === "洗衣" || item.id === "washer-stack") return "洗衣";
+  if (item.category === "分離式冷氣" || item.category === "窗型冷氣" || item.category === "冷氣共用") return "冷氣";
+  if (item.category === "小型家電") return "廚電";
+  return "全部";
+};
+
+const getItemSubBadge = (item: FeeItem): { text: string; type: string } => {
+  if (item.id.startsWith("tv-own-")) return { text: "自備架安裝", type: "mount" };
+  if (item.id.startsWith("tv-kit-")) return { text: "含架安裝", type: "mount" };
+  if (item.id === "tv-existing" || item.id === "tv-special-wall") return { text: "特殊施工", type: "special" };
+  if (item.category === "電視安裝") return { text: "線材天線", type: "part" };
+  if (item.category === "影音") return { text: "劇院音響", type: "audio" };
+  if (item.category === "電視") return { text: "基本運送", type: "delivery" };
+
+  if (item.id === "fridge-door" || item.id === "door") return { text: "拆門過窗", type: "special" };
+  if (item.category === "冰箱") return { text: "基本運送", type: "delivery" };
+
+  if (item.id === "washer-stack") return { text: "乾衣堆疊", type: "special" };
+  if (item.id === "tower") return { text: "運送＋安裝", type: "install" };
+  if (item.category === "洗衣") return { text: "基本運送", type: "delivery" };
+
+  if (item.category === "分離式冷氣" && item.price && item.price >= 3000 && !item.id.startsWith("pipe") && !item.id.startsWith("duct") && !item.id.startsWith("ac-remove")) return { text: "基本安裝", type: "install" };
+  if (item.category === "窗型冷氣" && item.price && item.price >= 800 && !item.id.startsWith("window-") && item.id !== "mobile") return { text: "基本安裝", type: "install" };
+  if (item.id.startsWith("ac-remove")) return { text: "拆舊機", type: "special" };
+  if (item.id.startsWith("pipe") || item.id === "flush") return { text: "銅管延長", type: "pipe" };
+  if (item.id.startsWith("duct")) return { text: "管槽配件", type: "pipe" };
+  if (item.id.startsWith("hole")) return { text: "洗孔工程", type: "hole" };
+  if (item.id.startsWith("galv-") || item.id.startsWith("steel-") || item.id === "floor-rack") return { text: "室外機支架", type: "bracket" };
+  if (item.id.startsWith("wire") || item.id === "socket" || item.id === "plug" || item.id === "box" || item.id === "panel" || item.id === "breaker") return { text: "水電配線", type: "electric" };
+  if (item.id.startsWith("pump-") || item.id === "drain") return { text: "排水設備", type: "drain" };
+  if (item.id.startsWith("awning-")) return { text: "遮雨棚", type: "part" };
+  if (item.id.startsWith("iron-") || item.id === "steel-window") return { text: "剪窗工程", type: "special" };
+  if (item.id.startsWith("window-")) return { text: "窗型加項", type: "part" };
+  if (item.category === "冷氣共用" || item.category === "分離式冷氣" || item.category === "窗型冷氣") return { text: "冷氣施工", type: "install" };
+
+  return { text: "運送定位", type: "delivery" };
+};
+
 const wallGroup = (item: FeeItem) => item.id.startsWith("tv-own-") ? "own"
   : item.id.startsWith("tv-kit-") ? "kit"
   : item.id === "tv-existing" || item.id === "tv-special-wall" ? "other"
   : null;
+
 const wallGroupLabel = (group: ReturnType<typeof wallGroup>) => group === "own" ? "自備架"
   : group === "kit" ? "含架安裝"
   : group === "other" ? "特殊施工"
   : null;
+
 const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) =>
   info.places.split("、").map((place) => ({
     value: `${fee}:${place}`,
@@ -19,6 +75,7 @@ const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) =>
     place,
   })),
 );
+
 const quickProductIds = ["tv55", "washer12", "fridge399", "split36", "window32"];
 type ProductCategory = "電視" | "冰箱" | "洗衣機" | "冷氣" | "小家電" | "影音";
 const productCategories: Array<{ id: ProductCategory; hint: string }> = [
@@ -29,6 +86,7 @@ const productCategories: Array<{ id: ProductCategory; hint: string }> = [
   { id: "小家電", hint: "廚電／生活" },
   { id: "影音", hint: "劇院／音響" },
 ];
+
 const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
   appliance: ["door", "fridge-door", "washer-stack", "tv-own-fixed59", "tv-existing"],
   split: ["ac-remove11", "pipe23", "duct80", "hole25", "galv-small", "socket"],
@@ -40,7 +98,9 @@ export default function Home() {
   const [productCategory, setProductCategory] = useState<ProductCategory>("電視");
   const [productId, setProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(1);
+  const [isOver10k, setIsOver10k] = useState(true);
   const [cart, setCart] = useState<Record<string, number>>({});
+  const [over10kMap, setOver10kMap] = useState<Record<string, boolean>>({});
   const [area, setArea] = useState(areaOptions[0].value);
   const [noElevator, setNoElevator] = useState(false);
   const [floor, setFloor] = useState(3);
@@ -48,9 +108,10 @@ export default function Home() {
   const [selectedExtras, setSelectedExtras] = useState<Record<string, number>>({});
   const [globalQuery, setGlobalQuery] = useState("");
   const [feeQuery, setFeeQuery] = useState("");
-  const [feeFilter, setFeeFilter] = useState("全部");
+  const [feeFilter, setFeeFilter] = useState<MainCategory>("全部");
   const [showAllFees, setShowAllFees] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const currentList = productCategory === "電視" ? products.filter((item) => item.category === "電視")
     : productCategory === "冰箱" ? products.filter((item) => item.category === "冰箱")
@@ -70,6 +131,7 @@ export default function Home() {
     setProductCategory(next);
     setMode(next === "冷氣" ? "split" : "appliance");
     setProductId(list[0].id);
+    setIsOver10k(true);
   };
 
   const selectProduct = (id: string) => {
@@ -83,13 +145,20 @@ export default function Home() {
     const fee = extras.find((item) => item.id === id);
     return sum + (fee?.price ?? 0) * qty;
   }, 0);
+
   const orderableItems = [...products, ...splitAC, ...windowAC];
   const cartRows = Object.entries(cart)
-    .map(([id, qty]) => ({ item: orderableItems.find((entry) => entry.id === id), qty }))
-    .filter((row): row is { item: FeeItem; qty: number } => Boolean(row.item));
+    .map(([id, qty]) => ({
+      item: orderableItems.find((entry) => entry.id === id),
+      qty,
+      isOver10k: over10kMap[id] ?? true,
+    }))
+    .filter((row): row is { item: FeeItem; qty: number; isOver10k: boolean } => Boolean(row.item));
+
   const cartHasSplit = cartRows.some((row) => splitAC.some((item) => item.id === row.item.id));
   const cartHasWindow = cartRows.some((row) => windowAC.some((item) => item.id === row.item.id));
   const cartHasAppliance = cartRows.some((row) => products.some((item) => item.id === row.item.id));
+  
   const extraCategories = new Set<string>();
   if (mode === "appliance" || cartHasAppliance) ["一般加項", "電視壁掛", "電視安裝", "影音安裝"].forEach((value) => extraCategories.add(value));
   if (mode === "split" || cartHasSplit) ["分離式冷氣", "冷氣共用"].forEach((value) => extraCategories.add(value));
@@ -108,7 +177,12 @@ export default function Home() {
     return (aIndex < 0 ? 999 : aIndex) - (bIndex < 0 ? 999 : bIndex);
   });
   const availableExtras = showAllExtras ? sortedExtras : sortedExtras.slice(0, 6);
-  const baseTotal = cartRows.reduce((sum, row) => sum + (row.item.price ?? 0) * row.qty, 0);
+
+  // 滿萬免基本運送安裝費之計算
+  const originalBaseTotal = cartRows.reduce((sum, row) => sum + (row.item.price ?? 0) * row.qty, 0);
+  const baseTotal = cartRows.reduce((sum, row) => sum + (row.isOver10k ? 0 : (row.item.price ?? 0)) * row.qty, 0);
+  const discountTotal = originalBaseTotal - baseTotal;
+
   const selectedArea = areaOptions.find((option) => option.value === area) ?? areaOptions[0];
   const areaTotal = cartRows.length ? (selectedArea.fee ?? 0) : 0;
   const stairUnits = noElevator ? Math.max(0, floor - 2) : 0;
@@ -119,10 +193,16 @@ export default function Home() {
   const total = baseTotal + areaTotal + stairTotal + extraTotal;
 
   const allFees = [...products, ...splitAC, ...windowAC, ...extras];
-  const filterOptions = ["全部", ...Array.from(new Set(allFees.map((item) => item.category)))];
+  const getCategoryCount = (catId: MainCategory) => {
+    if (catId === "全部") return allFees.length;
+    return allFees.filter((item) => getItemMainCategory(item) === catId).length;
+  };
+
   const filteredFees = allFees.filter((item) => {
+    const mainCat = getItemMainCategory(item);
+    const matchCategory = feeFilter === "全部" || mainCat === feeFilter;
     const haystack = `${item.category}${item.name}${item.note ?? ""}`.toLowerCase();
-    return (feeFilter === "全部" || item.category === feeFilter) && haystack.includes(feeQuery.toLowerCase());
+    return matchCategory && haystack.includes(feeQuery.toLowerCase());
   });
   const feeLimit = showAllFees || feeQuery || feeFilter !== "全部" ? 80 : 12;
 
@@ -168,11 +248,17 @@ export default function Home() {
 
   const addToCart = () => {
     setCart((prev) => ({ ...prev, [current.id]: (prev[current.id] ?? 0) + quantity }));
+    setOver10kMap((prev) => ({ ...prev, [current.id]: isOver10k }));
     setQuantity(1);
   };
 
   const addQuickItem = (id: string) => {
     setCart((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
+    setOver10kMap((prev) => ({ ...prev, [id]: prev[id] ?? true }));
+  };
+
+  const toggleItemOver10k = (id: string) => {
+    setOver10kMap((prev) => ({ ...prev, [id]: !(prev[id] ?? true) }));
   };
 
   const goToCalculator = () => {
@@ -223,7 +309,7 @@ export default function Home() {
       `配送地點：${selectedArea.place}`,
       `搬運方式：${noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}`,
       "",
-      ...cartRows.map(({ item, qty }) => `商品｜${item.name} × ${qty}｜${money((item.price ?? 0) * qty)}`),
+      ...cartRows.map(({ item, qty, isOver10k: item10k }) => `商品｜${item.name} × ${qty}｜${item10k ? "NT$ 0 (單機滿萬·免基本費)" : money((item.price ?? 0) * qty)}`),
       ...(cartRows.length ? [
         `跨區費｜${selectedArea.fee === null ? "另議" : money(areaTotal)}`,
         ...(stairTotal > 0 ? [`樓層搬運費｜${money(stairTotal)}`] : []),
@@ -231,6 +317,7 @@ export default function Home() {
       ...selectedExtraRows.map(({ item, qty }) => `加項｜${item.name} × ${qty}｜${item.price === null ? "另議" : money(item.price * qty)}`),
       "",
       `${hasQuoteItems ? "已知費用合計" : "預估合計"}｜${money(total)}`,
+      ...(discountTotal > 0 ? [`已享滿萬免運折抵｜${money(discountTotal)}`] : []),
       ...(hasQuoteItems ? ["提醒｜另議項目未計入合計"] : []),
       "實際收費以門市與現場施工評估為準。",
     ];
@@ -243,8 +330,6 @@ export default function Home() {
     }
     window.setTimeout(() => setCopyStatus("idle"), 2200);
   };
-
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleAddFromTable = (item: FeeItem) => {
     if (products.some((p) => p.id === item.id) || splitAC.some((p) => p.id === item.id) || windowAC.some((p) => p.id === item.id)) {
@@ -392,21 +477,59 @@ export default function Home() {
                 </label>
                 <button className="add-product" onClick={addToCart}>＋ 加入清單</button>
               </div>
+
+              <label className="checkbox-10k">
+                <input
+                  type="checkbox"
+                  checked={isOver10k}
+                  onChange={(e) => setIsOver10k(e.target.checked)}
+                />
+                <span>單機金額達 NT$ 10,000 以上（享免基本運送安裝費）</span>
+              </label>
+
               {current.note && <p className="inline-note">{current.note}</p>}
               
               <div className="cart-stack" aria-label="本次配送商品清單">
                 {cartRows.length === 0 ? (
                   <div className="cart-empty"><b>尚未加入商品</b><span>請選擇上方規格與數量後點擊「＋加入清單」</span></div>
-                ) : cartRows.map(({ item, qty }) => (
+                ) : cartRows.map(({ item, qty, isOver10k: item10k }) => (
                   <div className="cart-row" key={`cart-${item.id}`}>
                     <div className="cart-index">{String(cartRows.findIndex((row) => row.item.id === item.id) + 1).padStart(2, "0")}</div>
-                    <div className="cart-name"><b>{item.name}</b><small>{money(item.price ?? 0)}／{item.unit}</small></div>
+                    <div className="cart-name">
+                      <b>{item.name}</b>
+                      <small>
+                        {item10k ? (
+                          <>原基本費 {money(item.price ?? 0)}／{item.unit}</>
+                        ) : (
+                          <>{money(item.price ?? 0)}／{item.unit}</>
+                        )}
+                      </small>
+                      {item10k && <span className="badge-free">滿萬免運</span>}
+                      <div>
+                        <button
+                          type="button"
+                          className="toggle-10k-btn"
+                          onClick={() => toggleItemOver10k(item.id)}
+                        >
+                          {item10k ? "改為未滿萬自付" : "改為滿萬免基本費"}
+                        </button>
+                      </div>
+                    </div>
                     <div className="mini-stepper cart-stepper">
                       <button onClick={() => setCartQuantity(item.id, qty - 1)} aria-label={`減少${item.name}`}>−</button>
                       <span>{qty}</span>
                       <button onClick={() => setCartQuantity(item.id, qty + 1)} aria-label={`增加${item.name}`}>＋</button>
                     </div>
-                    <strong>{money((item.price ?? 0) * qty)}</strong>
+                    <strong>
+                      {item10k ? (
+                        <>
+                          <del className="strikethrough-price">{money((item.price ?? 0) * qty)}</del>
+                          <span className="free-price">NT$ 0</span>
+                        </>
+                      ) : (
+                        money((item.price ?? 0) * qty)
+                      )}
+                    </strong>
                     <button className="remove-product" onClick={() => setCartQuantity(item.id, 0)} aria-label={`移除${item.name}`}>移除</button>
                   </div>
                 ))}
@@ -492,12 +615,28 @@ export default function Home() {
           <aside className="estimate-card" id="estimate" aria-live="polite">
             <div className="estimate-label"><span className="live-dot">費用試算明細</span><small>價格含稅</small></div>
             <h3>{cartRows.length ? `同址配送（共 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件）` : "尚未選擇商品"}</h3>
+            
+            {discountTotal > 0 && (
+              <div className="discount-pill">
+                <span>滿萬免基本運費折抵</span>
+                <b>−{money(discountTotal)}</b>
+              </div>
+            )}
+
             <div className="estimate-total"><small>{hasQuoteItems ? "已知費用合計" : "預估合計"}</small><strong>{money(total)}</strong></div>
             <div className="estimate-lines">
-              {cartRows.map(({ item, qty }) => (
-                <div key={`summary-${item.id}`}><span>{item.name} × {qty}</span><b>{money((item.price ?? 0) * qty)}</b></div>
+              {cartRows.map(({ item, qty, isOver10k: item10k }) => (
+                <div key={`summary-${item.id}`}>
+                  <span>{item.name} × {qty} {item10k && <small className="tag-free">（滿萬免運）</small>}</span>
+                  <b>{item10k ? "NT$ 0" : money((item.price ?? 0) * qty)}</b>
+                </div>
               ))}
-              {cartRows.length > 0 && <div className="summary-subtotal"><span>商品基本費小計</span><b>{money(baseTotal)}</b></div>}
+              {cartRows.length > 0 && (
+                <div className="summary-subtotal">
+                  <span>商品基本費小計</span>
+                  <b>{money(baseTotal)}{discountTotal > 0 && <small className="tag-free">（已折抵 {money(discountTotal)}）</small>}</b>
+                </div>
+              )}
               {cartRows.length > 0 && <div><span>{selectedArea.place}跨區費（同址一次）</span><b>{selectedArea.fee === null ? "另議" : money(areaTotal)}</b></div>}
               {stairTotal > 0 && <div><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
               {selectedExtraRows.map(({ item, qty }) => (
@@ -506,10 +645,10 @@ export default function Home() {
             </div>
             {hasQuoteItems && <p className="quote-warning"><b>另議項目未計入合計</b><br />特殊施工與未列項目，費用依現場評估確認為準。</p>}
             <div className="estimate-footer">
-              <p><b>計費說明</b><br />同址多件商品跨區費僅收一次；實際收費依合約標準及現場施工條件為準。</p>
+              <p><b>計費說明</b><br />單機滿萬元享免基本運送安裝費；同址多件商品跨區費僅收一次；特殊加項依現場條件為準。</p>
               <div className="estimate-actions">
                 <button className="copy-quote" onClick={copyEstimate} disabled={!hasEstimateItems}>{copyStatus === "copied" ? "已複製明細 ✓" : copyStatus === "error" ? "複製失敗，請重試" : "複製報價明細"}</button>
-                <button onClick={() => { setCart({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); setCopyStatus("idle"); }}>清空清單</button>
+                <button onClick={() => { setCart({}); setOver10kMap({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); setCopyStatus("idle"); }}>清空清單</button>
               </div>
             </div>
           </aside>
@@ -524,12 +663,13 @@ export default function Home() {
         </a>
       )}
 
+      {/* 完整價目明細表 */}
       <section className="fees-section" id="fees">
         <div className="section-heading-row">
           <div>
             <p className="eyebrow"><span /> 價目明細</p>
             <h2>完整服務收費標準</h2>
-            <p className="section-subtext">所有收費項目皆清楚條列，點擊「＋加入」可直接帶入上方試算工具。</p>
+            <p className="section-subtext">所有收費項目清楚條列，單機滿萬元享免基本運送安裝費。點擊「＋加入」可直接帶入試算。</p>
           </div>
           <div className="search-box">
             <span aria-hidden="true">⌕</span>
@@ -537,9 +677,18 @@ export default function Home() {
           </div>
         </div>
 
+        {/* 6 大結構化主分類 Tab */}
         <div className="filter-row" aria-label="價目分類">
-          {filterOptions.map((filter) => (
-            <button key={filter} className={feeFilter === filter ? "filter active" : "filter"} onClick={() => setFeeFilter(filter)}>{filter}</button>
+          {mainCategoryFilters.map((filter) => (
+            <button
+              key={filter.id}
+              className={feeFilter === filter.id ? "filter active" : "filter"}
+              onClick={() => setFeeFilter(filter.id)}
+            >
+              <span>{filter.icon}</span>
+              <span>{filter.label}</span>
+              <span className="filter-count">({getCategoryCount(filter.id)})</span>
+            </button>
           ))}
         </div>
 
@@ -547,7 +696,7 @@ export default function Home() {
           <table className="fee-table">
             <thead>
               <tr>
-                <th style={{ width: "110px" }}>分類</th>
+                <th style={{ width: "130px" }}>分類／屬性</th>
                 <th style={{ width: "260px" }}>項目／規格</th>
                 <th>施工與計價備註</th>
                 <th style={{ width: "150px", textAlign: "right" }}>單價（含稅）</th>
@@ -556,21 +705,21 @@ export default function Home() {
             </thead>
             <tbody>
               {filteredFees.slice(0, feeLimit).map((item) => {
-                const group = wallGroup(item);
+                const subBadge = getItemSubBadge(item);
                 const isQuote = item.price === null;
                 const inCart = Boolean(cart[item.id]) || (selectedExtras[item.id] ?? 0) > 0;
                 return (
                   <tr key={`fee-${item.id}`} className={inCart ? "row-selected" : ""}>
                     <td>
-                      <span className={`table-badge${group ? ` badge-${group}` : ""}`}>
-                        {group ? wallGroupLabel(group) : item.category}
+                      <span className={`table-badge badge-${subBadge.type}`}>
+                        {subBadge.text}
                       </span>
                     </td>
                     <td>
                       <strong className="item-title">{item.name}</strong>
                     </td>
                     <td>
-                      <span className="item-note">{item.note || "標準施工規範"}</span>
+                      <span className="item-note">{item.note || "標準施工規範；單機滿萬免基本運送安裝"}</span>
                     </td>
                     <td className="item-price-cell">
                       {isQuote ? (
@@ -632,10 +781,10 @@ export default function Home() {
           <h2>配送與施工注意事項</h2>
         </div>
         <div className="note-cards">
-          <article><span>01</span><h3>廢四機免費回收</h3><p>購買電視、冰箱、洗衣機、冷氣，同品項、同數量、同時間地點享免費回收舊機（不含拆機工資與危險施工）。</p></article>
-          <article><span>02</span><h3>樓層搬運費</h3><p>無電梯 3 樓（含）以上加收樓層費，依商品尺寸每層加收 50～100 元，冷氣機型依標準計費。</p></article>
-          <article><span>03</span><h3>特殊與危險施工</h3><p>高空作業、外牆懸掛、無立足點或特殊結構施工，須經現場評估確認，費用另議。</p></article>
-          <article><span>04</span><h3>額外施工先報價</h3><p>超出標準安裝之管線延長、改電、洗洞或特殊壁掛等，施工前皆會先報價經同意後施作。</p></article>
+          <article><span>01</span><h3>單機滿萬免基本費</h3><p>購買單機金額達 NT$ 10,000 以上商品，享免基本運送安裝費；跨區費、樓層費與額外施工另計。</p></article>
+          <article><span>02</span><h3>廢四機免費回收</h3><p>購買電視、冰箱、洗衣機、冷氣，同品項、同數量、同時間地點享免費回收舊機（不含拆機工資與危險施工）。</p></article>
+          <article><span>03</span><h3>樓層搬運費</h3><p>無電梯 3 樓（含）以上加收樓層費，依商品尺寸每層加收 50～100 元，冷氣機型依標準計費。</p></article>
+          <article><span>04</span><h3>特殊施工先報價</h3><p>高空危險施工、超出標準安裝之管線延長、改電、洗洞或特殊壁掛等，施工前皆會先報價經同意後施作。</p></article>
         </div>
         <div className="source-note">
           <div><p><b>收費依據</b><br />依據標準家電配送安裝合約費率計收。</p></div>
