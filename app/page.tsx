@@ -326,26 +326,24 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-visual" aria-hidden="true">
-          <div className="price-card price-card-back">
-            <span>跨區費</span><strong>12</strong><small>個費率區間</small>
-          </div>
-          <div className="price-card price-card-main">
+          <div className="price-card-main">
             <div className="receipt-top">
-              <span>費用試算</span><span className="live-dot">即時計算</span>
+              <span>即時費用預估</span>
+              <span className="live-dot">即時計算</span>
             </div>
-            <div className="sample-line"><span>商品基本費</span><b>NT$ 3,100</b></div>
-            <div className="sample-line"><span>跨區運費</span><b>NT$ 200</b></div>
-            <div className="sample-line"><span>施工加項</span><b>NT$ 800</b></div>
-            <div className="sample-total"><span>預估合計</span><strong>NT$ 4,100</strong></div>
+            <div className="sample-line"><span>商品基本費</span><b>{cartRows.length > 0 ? money(baseTotal) : "NT$ 3,100"}</b></div>
+            <div className="sample-line"><span>跨區運費</span><b>{selectedArea.fee === null ? "另議" : money(areaTotal)}</b></div>
+            {stairTotal > 0 && <div className="sample-line"><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
+            <div className="sample-line"><span>施工加項</span><b>{money(extraTotal)}</b></div>
+            <div className="sample-total"><span>預估合計</span><strong>{money(total > 0 ? total : 4100)}</strong></div>
             <div className="receipt-dashes" />
-            <small>依現場實際狀況報價</small>
+            <small>同址訂單跨區費只計一次 · 價格含稅</small>
           </div>
-          <div className="orange-disc">價格<br />含稅</div>
         </div>
       </section>
 
       <section className="calculator-section" id="calculator">
-        <div className="section-heading light-heading">
+        <div className="section-heading">
           <p className="eyebrow"><span /> 試算工具</p>
           <h2>配送安裝費用試算</h2>
           <p>選擇商品、送達地點與樓層，如有特殊施工可勾選加項。同址訂單跨區費只計一次。</p>
@@ -367,25 +365,36 @@ export default function Home() {
 
         <div className="calculator-grid">
           <div className="calculator-form">
+            {/* Step 01 */}
             <div className="step-block">
-              <div className="step-title"><b>01</b><div><h3>選擇商品</h3><p>可連續加入多樣商品，同品項自動累加</p></div></div>
-              <div className="quick-adds" aria-label="常用商品快速加入">
-                <span>常用項目</span>
-                {quickProductIds.map((id) => {
-                  const item = orderableItems.find((entry) => entry.id === id)!;
-                  const shortName: Record<string, string> = {
-                    tv55: "55–59 吋電視",
-                    washer12: "12.5kg 洗衣機",
-                    fridge399: "300–399L 冰箱",
-                    split36: "3.6kW 分離式",
-                    window32: "3.2kW 窗型",
-                  };
-                  return <button key={id} onClick={() => addQuickItem(id)}>＋ {shortName[id]} <small>{money(item.price ?? 0)}</small></button>;
-                })}
+              <div className={`step-title ${cartRows.length > 0 ? "completed" : ""}`}>
+                <b>{cartRows.length > 0 ? "✓" : "01"}</b>
+                <div>
+                  <h3>選擇商品</h3>
+                  <p>{cartRows.length > 0 ? `已加入 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品（可繼續加入其他規格）` : "點選規格膠囊或選單加入清單"}</p>
+                </div>
               </div>
+
+              {/* 規格按鈕膠囊 (Spec Chips) */}
+              <div className="spec-chips-wrap">
+                <span className="spec-chips-label">{productCategory}常用規格：</span>
+                <div className="spec-chips">
+                  {currentList.slice(0, 6).map((item) => (
+                    <button
+                      key={`chip-${item.id}`}
+                      type="button"
+                      className={`spec-chip ${productId === item.id ? "active" : ""}`}
+                      onClick={() => selectProduct(item.id)}
+                    >
+                      {item.name.replace(/^液晶電視 |^冰箱／冷凍櫃 |^滾筒洗衣機 |^洗衣機 |^1 對 1｜|^窗型／直立式｜/, "")} · {item.price ? money(item.price) : "另議"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="field-grid add-grid">
                 <label className="field wide">
-                  <span>{productCategory}規格</span>
+                  <span>{productCategory}完整型號規格</span>
                   <select value={productId} onChange={(e) => selectProduct(e.target.value)}>
                     {productCategory === "冷氣" ? (
                       <>
@@ -414,9 +423,10 @@ export default function Home() {
                 <button className="add-product" onClick={addToCart}>＋ 加入清單</button>
               </div>
               {current.note && <p className="inline-note">{current.note}</p>}
+              
               <div className="cart-stack" aria-label="本次配送商品清單">
                 {cartRows.length === 0 ? (
-                  <div className="cart-empty"><b>尚未加入商品</b><span>請選擇規格與數量後加入</span></div>
+                  <div className="cart-empty"><b>尚未加入商品</b><span>請選擇上方規格與數量後點擊「＋加入清單」</span></div>
                 ) : cartRows.map(({ item, qty }) => (
                   <div className="cart-row" key={`cart-${item.id}`}>
                     <div className="cart-index">{String(cartRows.findIndex((row) => row.item.id === item.id) + 1).padStart(2, "0")}</div>
@@ -433,8 +443,15 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Step 02 */}
             <div className="step-block">
-              <div className="step-title"><b>02</b><div><h3>配送地點與樓層</h3><p>選擇送達鄉鎮與搬運方式</p></div></div>
+              <div className="step-title completed">
+                <b>02</b>
+                <div>
+                  <h3>配送地點與樓層</h3>
+                  <p>送達 <b>{selectedArea.place}</b> ｜ 搬運：{noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}</p>
+                </div>
+              </div>
               <div className="field-grid two">
                 <label className="field">
                   <span>鄉鎮／區域</span>
@@ -460,11 +477,18 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              <p className="condition-summary">送至 <b>{selectedArea.place}</b> ｜ 跨區費：{selectedArea.fee === null ? "另議" : money(selectedArea.fee)} ｜ 搬運：{noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}</p>
+              <p className="condition-summary">配送至 <b>{selectedArea.place}</b> ｜ 跨區運費：{selectedArea.fee === null ? "另議" : money(selectedArea.fee)} ｜ 搬運：{noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}</p>
             </div>
 
+            {/* Step 03 */}
             <div className="step-block">
-              <div className="step-title"><b>03</b><div><h3>施工與安裝加項</h3><p>如需壁掛、拆舊機、拉管線等特殊施工可在此勾選（可略過）</p></div></div>
+              <div className={`step-title ${selectedExtraRows.length > 0 ? "completed" : ""}`}>
+                <b>{selectedExtraRows.length > 0 ? "✓" : "03"}</b>
+                <div>
+                  <h3>施工與安裝加項</h3>
+                  <p>{selectedExtraRows.length > 0 ? `已選取 ${selectedExtraRows.length} 項加項施工` : "如需壁掛、拆舊機、拉管線等特殊施工可在此勾選（可略過）"}</p>
+                </div>
+              </div>
               <div className="extras-grid">
                 {availableExtras.map((item) => {
                   const qty = selectedExtras[item.id] ?? 0;
@@ -496,7 +520,7 @@ export default function Home() {
           </div>
 
           <aside className="estimate-card" id="estimate" aria-live="polite">
-            <div className="estimate-label"><span className="live-dot">費用試算</span><small>價格含稅</small></div>
+            <div className="estimate-label"><span className="live-dot">費用試算明細</span><small>價格含稅</small></div>
             <h3>{cartRows.length ? `同址配送（共 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件）` : "尚未選擇商品"}</h3>
             <div className="estimate-total"><small>{hasQuoteItems ? "已知費用合計" : "預估合計"}</small><strong>{money(total)}</strong></div>
             <div className="estimate-lines">
