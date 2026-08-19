@@ -455,11 +455,8 @@ export default function Home() {
       )}
       <header className="site-header">
         <a className="brand" href="#top" aria-label="回到頁首">
-          <div className="brand-icon-squircle" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <path d="M7 12h10M12 7v10" />
-            </svg>
+          <div className="brand-icon-squircle" aria-label="WG 標誌">
+            <span className="wg-logo-text">WG</span>
           </div>
           <span>家電配送安裝費試算</span>
         </a>
@@ -880,7 +877,7 @@ export default function Home() {
       <section className="area-section">
         <div className="area-intro">
           <p className="eyebrow"><span /> 運費標準</p>
-          <h2>各區域跨區運費</h2>
+          <h2>五甲店 · 各區域跨區運費</h2>
           <p>跨區費依送達區域計收，同址訂單只計一次；未列出之區域費用另議。</p>
           <a href="#calculator" className="text-link">前往試算 ↑</a>
         </div>
@@ -943,11 +940,8 @@ export default function Home() {
 
       <footer>
         <div className="brand">
-          <div className="brand-icon-squircle" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <path d="M7 12h10M12 7v10" />
-            </svg>
+          <div className="brand-icon-squircle" aria-label="WG 標誌">
+            <span className="wg-logo-text">WG</span>
           </div>
           <span>家電配送安裝費試算</span>
         </div>
