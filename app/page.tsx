@@ -1,20 +1,115 @@
 "use client";
 
 import { useState } from "react";
-
 import { areaFees, extras, products, splitAC, windowAC, type FeeItem } from "./pricing-data";
 
 const money = (value: number) => `NT$ ${value.toLocaleString("zh-TW")}`;
 
+// Apple SF-Symbols 風格極簡向量圖標系統
+const TvIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="4" width="20" height="13" rx="2.5" />
+    <path d="M12 17v4" />
+    <path d="M8 21h8" />
+  </svg>
+);
+
+const FridgeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="4" y="2" width="16" height="20" rx="2.5" />
+    <line x1="4" y1="9" x2="20" y2="9" />
+    <line x1="8" y1="5" x2="8" y2="7" />
+    <line x1="8" y1="12" x2="8" y2="15" />
+  </svg>
+);
+
+const WasherIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="4" y="2" width="16" height="20" rx="2.5" />
+    <circle cx="12" cy="13" r="5" />
+    <path d="M12 15a2 2 0 1 0 0-4" />
+    <circle cx="7" cy="5.5" r="0.8" fill="currentColor" />
+    <circle cx="10" cy="5.5" r="0.8" fill="currentColor" />
+  </svg>
+);
+
+const AcIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="4" width="20" height="8" rx="2" />
+    <line x1="6" y1="9" x2="10" y2="9" />
+    <path d="M6 16c1.5 2 3.5 2 5 0s3.5-2 5 0" />
+    <path d="M7 19c1.5 2 3.5 2 5 0s3.5-2 5 0" />
+  </svg>
+);
+
+const KitchenIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 2v5" />
+    <path d="M7 7h10a3 3 0 0 1 3 3v2a8 8 0 0 1-16 0v-2a3 3 0 0 1 3-3Z" />
+    <path d="M8 18v3" />
+    <path d="M16 18v3" />
+  </svg>
+);
+
+const AudioIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="5" y="2" width="14" height="20" rx="3" />
+    <circle cx="12" cy="7" r="2" />
+    <circle cx="12" cy="15" r="3.5" />
+    <circle cx="12" cy="15" r="1.2" fill="currentColor" />
+  </svg>
+);
+
+const AllIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+  </svg>
+);
+
+const TagCheckIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+    <line x1="7" y1="7" x2="7.01" y2="7" />
+    <path d="m9 14 2 2 4-4" />
+  </svg>
+);
+
+const RecycleIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
+    <path d="M11 19h8.2a1.8 1.8 0 0 0 1.58-.88 1.78 1.78 0 0 0 .02-1.79l-2.7-4.66" />
+    <path d="m14 4-2.8 4.7" />
+    <path d="m9.7 7.7 2.4-4a1.8 1.8 0 0 1 3.1 0l3.8 6.4" />
+    <path d="m4.5 13 2.5 6-3.5 1" />
+  </svg>
+);
+
+const StairsIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M20 20h-4v-4h-4v-4H8V8H4V4" />
+    <path d="M4 20h16" />
+  </svg>
+);
+
+const ShieldCheckIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="m9 12 2 2 4-4" />
+  </svg>
+);
+
 export type MainCategory = "全部" | "電視" | "冰箱" | "洗衣" | "冷氣" | "廚電";
 
-const mainCategoryFilters: Array<{ id: MainCategory; label: string; icon: string }> = [
-  { id: "全部", label: "全部項目", icon: "📋" },
-  { id: "電視", label: "電視與壁掛影音", icon: "📺" },
-  { id: "冰箱", label: "冰箱與冷凍櫃", icon: "❄️" },
-  { id: "洗衣", label: "洗衣機與乾衣機", icon: "🧺" },
-  { id: "冷氣", label: "冷氣空調與施工", icon: "🌬️" },
-  { id: "廚電", label: "生活與廚房家電", icon: "🔌" },
+const mainCategoryFilters: Array<{ id: MainCategory; label: string; Icon: React.ComponentType<{ className?: string }> }> = [
+  { id: "全部", label: "全部項目", Icon: AllIcon },
+  { id: "電視", label: "電視與壁掛", Icon: TvIcon },
+  { id: "冰箱", label: "冰箱與冷凍", Icon: FridgeIcon },
+  { id: "洗衣", label: "洗衣與乾衣", Icon: WasherIcon },
+  { id: "冷氣", label: "冷氣與施工", Icon: AcIcon },
+  { id: "廚電", label: "生活與廚房", Icon: KitchenIcon },
 ];
 
 const getItemMainCategory = (item: FeeItem): MainCategory => {
@@ -78,13 +173,13 @@ const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) =>
 
 const quickProductIds = ["tv55", "washer12", "fridge399", "split36", "window32"];
 type ProductCategory = "電視" | "冰箱" | "洗衣機" | "冷氣" | "小家電" | "影音";
-const productCategories: Array<{ id: ProductCategory; hint: string }> = [
-  { id: "電視", hint: "液晶電視" },
-  { id: "冰箱", hint: "單雙門／對開" },
-  { id: "洗衣機", hint: "直立／滾筒" },
-  { id: "冷氣", hint: "分離／窗型" },
-  { id: "小家電", hint: "廚電／生活" },
-  { id: "影音", hint: "劇院／音響" },
+const productCategories: Array<{ id: ProductCategory; hint: string; Icon: React.ComponentType<{ className?: string }> }> = [
+  { id: "電視", hint: "液晶電視", Icon: TvIcon },
+  { id: "冰箱", hint: "單雙門／對開", Icon: FridgeIcon },
+  { id: "洗衣機", hint: "直立／滾筒", Icon: WasherIcon },
+  { id: "冷氣", hint: "分離／窗型", Icon: AcIcon },
+  { id: "小家電", hint: "廚電／生活", Icon: KitchenIcon },
+  { id: "影音", hint: "劇院／音響", Icon: AudioIcon },
 ];
 
 const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
@@ -352,6 +447,12 @@ export default function Home() {
       )}
       <header className="site-header">
         <a className="brand" href="#top" aria-label="回到頁首">
+          <div className="brand-icon-squircle" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <path d="M7 12h10M12 7v10" />
+            </svg>
+          </div>
           <span>家電配送安裝費試算</span>
         </a>
         <nav aria-label="主要導覽">
@@ -404,18 +505,26 @@ export default function Home() {
           </div>
         </div>
 
+        {/* 分類 Segmented Tabs (含 Apple 質感圖標) */}
         <div className="category-tabs" role="tablist" aria-label="商品分類">
-          {productCategories.map((category) => (
-            <button
-              key={category.id}
-              className={productCategory === category.id ? "category-tab active" : "category-tab"}
-              onClick={() => switchCategory(category.id)}
-              role="tab"
-              aria-selected={productCategory === category.id}
-            >
-              <span>{category.id}</span><small>{category.hint}</small>
-            </button>
-          ))}
+          {productCategories.map((category) => {
+            const IconComponent = category.Icon;
+            return (
+              <button
+                key={category.id}
+                className={productCategory === category.id ? "category-tab active" : "category-tab"}
+                onClick={() => switchCategory(category.id)}
+                role="tab"
+                aria-selected={productCategory === category.id}
+              >
+                <div className="tab-icon-wrap">
+                  <IconComponent className="w-5 h-5" />
+                </div>
+                <span>{category.id}</span>
+                <small>{category.hint}</small>
+              </button>
+            );
+          })}
         </div>
 
         <div className="calculator-grid">
@@ -677,19 +786,22 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 6 大結構化主分類 Tab */}
+        {/* 6 大結構化主分類 Tab (含 SF Pro 圖標) */}
         <div className="filter-row" aria-label="價目分類">
-          {mainCategoryFilters.map((filter) => (
-            <button
-              key={filter.id}
-              className={feeFilter === filter.id ? "filter active" : "filter"}
-              onClick={() => setFeeFilter(filter.id)}
-            >
-              <span>{filter.icon}</span>
-              <span>{filter.label}</span>
-              <span className="filter-count">({getCategoryCount(filter.id)})</span>
-            </button>
-          ))}
+          {mainCategoryFilters.map((filter) => {
+            const FilterIcon = filter.Icon;
+            return (
+              <button
+                key={filter.id}
+                className={feeFilter === filter.id ? "filter active" : "filter"}
+                onClick={() => setFeeFilter(filter.id)}
+              >
+                <FilterIcon className="w-4 h-4" />
+                <span>{filter.label}</span>
+                <span className="filter-count">({getCategoryCount(filter.id)})</span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="fee-table-wrap">
@@ -775,16 +887,45 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 服務說明與保障 (含 Apple 質感圖標) */}
       <section className="notes-section" id="notes">
         <div className="section-heading">
           <p className="eyebrow"><span /> 服務說明</p>
           <h2>配送與施工注意事項</h2>
         </div>
         <div className="note-cards">
-          <article><span>01</span><h3>單機滿萬免基本費</h3><p>購買單機金額達 NT$ 10,000 以上商品，享免基本運送安裝費；跨區費、樓層費與額外施工另計。</p></article>
-          <article><span>02</span><h3>廢四機免費回收</h3><p>購買電視、冰箱、洗衣機、冷氣，同品項、同數量、同時間地點享免費回收舊機（不含拆機工資與危險施工）。</p></article>
-          <article><span>03</span><h3>樓層搬運費</h3><p>無電梯 3 樓（含）以上加收樓層費，依商品尺寸每層加收 50～100 元，冷氣機型依標準計費。</p></article>
-          <article><span>04</span><h3>特殊施工先報價</h3><p>高空危險施工、超出標準安裝之管線延長、改電、洗洞或特殊壁掛等，施工前皆會先報價經同意後施作。</p></article>
+          <article>
+            <div className="note-icon-squircle">
+              <TagCheckIcon className="w-5 h-5" />
+            </div>
+            <span>01 優惠條款</span>
+            <h3>單機滿萬免基本費</h3>
+            <p>購買單機金額達 NT$ 10,000 以上商品，享免基本運送安裝費；跨區費、樓層費與額外施工另計。</p>
+          </article>
+          <article>
+            <div className="note-icon-squircle">
+              <RecycleIcon className="w-5 h-5" />
+            </div>
+            <span>02 環保服務</span>
+            <h3>廢四機免費回收</h3>
+            <p>購買電視、冰箱、洗衣機、冷氣，同品項、同數量、同時間地點享免費回收舊機（不含拆機工資與危險施工）。</p>
+          </article>
+          <article>
+            <div className="note-icon-squircle">
+              <StairsIcon className="w-5 h-5" />
+            </div>
+            <span>03 搬運規範</span>
+            <h3>樓層搬運費</h3>
+            <p>無電梯 3 樓（含）以上加收樓層費，依商品尺寸每層加收 50～100 元，冷氣機型依標準計費。</p>
+          </article>
+          <article>
+            <div className="note-icon-squircle">
+              <ShieldCheckIcon className="w-5 h-5" />
+            </div>
+            <span>04 透明保障</span>
+            <h3>特殊施工先報價</h3>
+            <p>高空危險施工、超出標準安裝之管線延長、改電、洗洞或特殊壁掛等，施工前皆會先報價經同意後施作。</p>
+          </article>
         </div>
         <div className="source-note">
           <div><p><b>收費依據</b><br />依據標準家電配送安裝合約費率計收。</p></div>
@@ -793,7 +934,15 @@ export default function Home() {
       </section>
 
       <footer>
-        <div className="brand"><span>家電配送安裝費試算</span></div>
+        <div className="brand">
+          <div className="brand-icon-squircle" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <path d="M7 12h10M12 7v10" />
+            </svg>
+          </div>
+          <span>家電配送安裝費試算</span>
+        </div>
         <p>家電配送安裝費用線上試算工具</p>
         <a href="#top">回到頁首 ↑</a>
       </footer>

@@ -88,116 +88,69 @@ main { width: 100%; overflow-x: clip; }
   top: 0;
   z-index: 40;
 }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
-.brand-mark {
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+.brand-icon-squircle {
   width: 32px; height: 32px; display: grid; place-items: center;
-  background: var(--brand-blue); color: white; border-radius: 8px;
-  font-weight: 800; font-size: 15px; box-shadow: 0 2px 6px rgba(0, 113, 227, 0.25);
+  background: var(--brand-blue); color: white; border-radius: 9px;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.28);
 }
-.brand-mark.small { width: 28px; height: 28px; font-size: 13px; flex: 0 0 auto; }
+.brand-icon-squircle svg { stroke: white; }
 .site-header nav { display: flex; gap: 28px; font-size: 14px; font-weight: 600; color: var(--text-secondary); }
 .site-header nav a { transition: color .15s ease; }
 .site-header nav a:hover { color: var(--brand-blue); }
-.version-pill {
-  border: 1px solid var(--border-subtle); border-radius: 999px; background: var(--bg-surface-subtle);
-  padding: 6px 12px; font-size: 12px; font-weight: 700; color: var(--text-secondary); letter-spacing: .02em;
-}
 
-/* Hero 區塊 */
-.hero {
-  max-width: 1240px; margin: 0 auto; padding: 60px 28px 50px;
-  display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px;
-  position: relative;
+/* 分類 Segmented Tabs (含 Apple 質感向量圖標) */
+.category-tabs {
+  max-width: 1240px; margin: 24px auto 20px; display: grid; grid-template-columns: repeat(6, 1fr);
+  background: var(--bg-surface-subtle); border-radius: 14px; padding: 5px; gap: 5px; border: 1px solid var(--border-subtle);
 }
-.hero-copy { min-width: 0; }
-.eyebrow {
-  margin: 0 0 14px; display: flex; align-items: center; gap: 8px;
-  color: var(--brand-blue); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+.category-tab {
+  min-height: 64px; color: var(--text-secondary); background: transparent; border: 0;
+  border-radius: 10px; padding: 10px 8px; text-align: center; cursor: pointer; transition: all .15s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
 }
-.eyebrow span { width: 16px; height: 2px; background: currentColor; border-radius: 1px; }
-.hero h1, .section-heading h2, .area-intro h2 {
-  margin: 0; font-weight: 800;
-  font-size: clamp(38px, 4.5vw, 56px); line-height: 1.15; letter-spacing: -.03em;
-  color: var(--text-primary);
-}
-.hero h1 em { color: var(--brand-blue); font-style: normal; }
-.hero-lead { max-width: 540px; margin: 20px 0 0; color: var(--text-secondary); font-size: 16px; line-height: 1.7; }
-
-/* Spotlight 萬用搜尋列 */
-.universal-search-wrap { position: relative; max-width: 540px; margin-top: 24px; }
-.universal-search {
-  height: 54px; display: grid; grid-template-columns: 44px minmax(0,1fr) 40px; align-items: center;
-  background: var(--bg-surface); border: 1.5px solid var(--border-subtle); border-radius: 12px;
-  box-shadow: var(--shadow-md); transition: all .15s ease;
-}
-.universal-search:focus-within {
-  border-color: var(--brand-blue);
-  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12), var(--shadow-md);
-}
-.universal-search > span { text-align: center; color: var(--text-muted); font-size: 20px; }
-.universal-search input { width: 100%; height: 100%; border: 0; outline: 0; background: transparent; color: var(--text-primary); font-size: 15px; font-weight: 600; }
-.universal-search input::placeholder { color: var(--text-muted); font-weight: 500; }
-.universal-search > button { height: 100%; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 20px; }
-.universal-results {
-  position: absolute; z-index: 25; left: 0; right: 0; top: 62px; max-height: 380px; overflow-y: auto;
-  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px;
-  box-shadow: var(--shadow-xl); padding: 6px;
-}
-.universal-results > button {
-  width: 100%; min-height: 56px; display: grid; grid-template-columns: auto minmax(0,1fr) auto auto;
-  align-items: center; gap: 12px; padding: 10px 14px; border: 0; border-bottom: 1px solid #f1f5f9;
-  background: transparent; color: var(--text-primary); text-align: left; cursor: pointer; border-radius: 8px;
-  transition: background .12s ease;
-}
-.universal-results > button:last-of-type { border-bottom: 0; }
-.universal-results > button:hover, .universal-results > button:focus-visible { background: var(--bg-surface-subtle); outline: none; }
-.universal-results > p { margin: 0; padding: 24px; color: var(--text-muted); text-align: center; font-size: 13px; }
-.result-kind { min-width: 38px; padding: 4px 8px; border-radius: 6px; background: var(--brand-blue-subtle); color: var(--brand-blue); text-align: center; font-size: 11px; font-weight: 700; }
-.result-copy { min-width: 0; }
-.result-copy b { display: block; font-size: 13px; color: var(--text-primary); }
-.result-copy small { display: block; margin-top: 2px; color: var(--text-muted); font-size: 11px; }
-.result-price { white-space: nowrap; color: var(--text-primary); font-size: 13px; font-weight: 700; }
-.result-action { white-space: nowrap; color: var(--brand-blue); font-size: 12px; font-weight: 700; }
-
-.search-shortcuts { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; color: var(--text-muted); font-size: 12px; }
-.search-shortcuts button {
-  padding: 5px 12px; border: 1px solid var(--border-subtle); border-radius: 999px;
-  background: var(--bg-surface); color: var(--text-secondary); cursor: pointer; font-size: 12px; font-weight: 600;
+.tab-icon-wrap {
+  width: 26px; height: 26px; display: grid; place-items: center; color: var(--text-muted);
   transition: all .15s ease;
 }
-.search-shortcuts button:hover { border-color: var(--brand-blue); color: var(--brand-blue); background: var(--brand-blue-subtle); }
+.category-tab span { display: block; font-size: 13px; font-weight: 700; line-height: 1.2; }
+.category-tab small { display: block; font-size: 10px; color: var(--text-muted); line-height: 1.2; }
+.category-tab:hover { color: var(--text-primary); }
+.category-tab:hover .tab-icon-wrap { color: var(--text-primary); }
+.category-tab.active {
+  background: var(--bg-surface); color: var(--brand-blue);
+  box-shadow: var(--shadow-sm);
+}
+.category-tab.active .tab-icon-wrap { color: var(--brand-blue); transform: scale(1.08); }
+.category-tab.active small { color: var(--brand-blue); opacity: .85; }
 
-.hero-actions { margin-top: 28px; display: flex; align-items: center; gap: 20px; }
-.primary-button {
-  display: inline-flex; align-items: center; gap: 14px; background: var(--brand-blue); color: white;
-  padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: 700;
-  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25); transition: all .15s ease;
+/* 試算器 Grid 佈局 */
+.calculator-grid { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(330px, 0.75fr); gap: 28px; align-items: start; }
+.calculator-form { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; box-shadow: var(--shadow-sm); overflow: hidden; }
+.step-block { padding: 28px 30px; border-bottom: 1px solid var(--border-subtle); }
+.step-block:last-child { border-bottom: 0; }
+.step-title { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.step-title > b {
+  width: 34px; height: 34px; flex: 0 0 auto; display: grid; place-items: center;
+  background: var(--bg-surface-subtle); border-radius: 50%; color: var(--text-secondary);
+  font-size: 13px; font-weight: 800; border: 1px solid var(--border-subtle); transition: all .15s ease;
 }
-.primary-button:hover { background: var(--brand-blue-hover); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0, 113, 227, 0.32); }
-.primary-button span { font-size: 14px; }
-.text-link { font-weight: 700; font-size: 14px; color: var(--text-secondary); transition: color .15s ease; }
-.text-link:hover { color: var(--brand-blue); }
+.step-title.completed > b {
+  background: var(--success-green); color: white; border-color: var(--success-green);
+}
+.step-title h3 { margin: 0; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.step-title p { margin: 3px 0 0; color: var(--text-muted); font-size: 12px; }
 
-/* Hero 右側現代收據卡展示 */
-.hero-visual { position: relative; display: flex; justify-content: center; }
-.price-card-main {
-  width: 100%; max-width: 380px; background: var(--bg-surface); border: 1px solid var(--border-subtle);
-  border-radius: 16px; padding: 26px; box-shadow: var(--shadow-xl);
+/* 規格按鈕膠囊 (Spec Chips) */
+.spec-chips-wrap { margin-bottom: 16px; }
+.spec-chips-label { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block; }
+.spec-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.spec-chip {
+  padding: 7px 12px; border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--bg-surface);
+  color: var(--text-secondary); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .12s ease;
 }
-.receipt-top { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px; margin-bottom: 14px; font-weight: 700; font-size: 14px; }
-.live-dot {
-  font-size: 11px; color: var(--success-green-text); background: var(--success-green-subtle);
-  border-radius: 999px; padding: 4px 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;
-}
-.live-dot::before { content: ""; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--success-green); }
-.sample-line { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; color: var(--text-secondary); }
-.sample-line b { color: var(--text-primary); font-weight: 600; }
-.sample-total { margin-top: 14px; padding-top: 14px; border-top: 1.5px solid var(--text-primary); display: flex; justify-content: space-between; align-items: baseline; }
-.sample-total span { font-size: 14px; font-weight: 700; }
-.sample-total strong { color: var(--brand-blue); font-size: 24px; font-weight: 800; }
-.receipt-dashes { margin: 18px 0 12px; border-top: 1px dashed var(--border-medium); }
-.price-card-main > small { color: var(--text-muted); font-size: 11px; display: block; text-align: center; }
-.price-card-back, .orange-disc { display: none; }
+.spec-chip:hover { border-color: var(--border-medium); background: var(--bg-surface-subtle); }
+.spec-chip.active { border-color: var(--brand-blue); background: var(--brand-blue-subtle); color: var(--brand-blue); font-weight: 700; }
 
 /* 試算主區塊 (Calculator Section) */
 .calculator-section {
@@ -536,11 +489,16 @@ main { width: 100%; overflow-x: clip; }
 .notes-section { max-width: 1240px; margin: 0 auto; padding: 80px 28px 60px; }
 .note-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
 .note-cards article {
-  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px;
-  padding: 24px 20px; box-shadow: var(--shadow-sm);
+  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 14px;
+  padding: 26px 22px; box-shadow: var(--shadow-sm); transition: transform .15s ease, box-shadow .15s ease;
 }
-.note-cards span { color: var(--brand-blue); font-size: 14px; font-weight: 800; }
-.note-cards h3 { margin: 12px 0 8px; font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.note-cards article:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.note-icon-squircle {
+  width: 36px; height: 36px; border-radius: 10px; background: var(--brand-blue-subtle); color: var(--brand-blue);
+  display: grid; place-items: center; margin-bottom: 14px;
+}
+.note-cards span { color: var(--text-muted); font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.note-cards h3 { margin: 8px 0 8px; font-size: 15px; font-weight: 700; color: var(--text-primary); }
 .note-cards p { color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin: 0; }
 .source-note {
   display: flex; justify-content: space-between; align-items: center; gap: 24px;
