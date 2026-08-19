@@ -164,13 +164,20 @@ const wallGroupLabel = (group: ReturnType<typeof wallGroup>) => group === "own" 
   : group === "other" ? "特殊施工"
   : null;
 
-const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) =>
-  info.places.split("、").map((place) => ({
+const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) => {
+  if (fee === "0") {
+    return [{
+      value: `0:${info.places}`,
+      fee: info.price,
+      place: info.places,
+    }];
+  }
+  return info.places.split("、").map((place) => ({
     value: `${fee}:${place}`,
     fee: info.price,
     place,
-  })),
-);
+  }));
+});
 
 const quickProductIds = ["tv55", "washer12", "fridge399", "split36", "window32"];
 type ProductCategory = "電視" | "冰箱" | "洗衣機" | "冷氣" | "小家電" | "影音";
