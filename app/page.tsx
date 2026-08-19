@@ -138,7 +138,8 @@ const getItemSubBadge = (item: FeeItem): { text: string; type: string } => {
 
   if (item.category === "分離式冷氣" && item.price && item.price >= 3000 && !item.id.startsWith("pipe") && !item.id.startsWith("duct") && !item.id.startsWith("ac-remove")) return { text: "基本安裝", type: "install" };
   if (item.category === "窗型冷氣" && item.price && item.price >= 800 && !item.id.startsWith("window-") && item.id !== "mobile") return { text: "基本安裝", type: "install" };
-  if (item.id.startsWith("ac-remove")) return { text: "拆舊機", type: "special" };
+  if (item.id.includes("recycle")) return { text: "拆機回收(免費)", type: "install" };
+  if (item.id.startsWith("ac-remove") || item.id.startsWith("window-remove")) return { text: "自留拆機", type: "special" };
   if (item.id.startsWith("pipe") || item.id === "flush") return { text: "銅管延長", type: "pipe" };
   if (item.id.startsWith("duct")) return { text: "管槽配件", type: "pipe" };
   if (item.id.startsWith("hole")) return { text: "洗孔工程", type: "hole" };
@@ -184,8 +185,8 @@ const productCategories: Array<{ id: ProductCategory; hint: string; Icon: React.
 
 const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
   appliance: ["door", "fridge-door", "washer-stack", "tv-own-fixed59", "tv-existing"],
-  split: ["ac-remove11", "pipe23", "duct80", "hole25", "galv-small", "socket"],
-  window: ["window-frame", "window-hang", "window-cover", "socket", "awning-small", "iron-hollow"],
+  split: ["ac-remove-recycle", "ac-remove11", "pipe23", "duct80", "hole25", "galv-small", "socket"],
+  window: ["window-remove-recycle", "window-remove-self", "window-frame", "window-hang", "window-cover", "socket", "awning-small", "iron-hollow"],
 };
 
 export default function Home() {
@@ -906,9 +907,9 @@ export default function Home() {
             <div className="note-icon-squircle">
               <RecycleIcon className="w-5 h-5" />
             </div>
-            <span>02 環保服務</span>
-            <h3>廢四機免費回收</h3>
-            <p>購買電視、冰箱、洗衣機、冷氣，同品項、同數量、同時間地點享免費回收舊機（不含拆機工資與危險施工）。</p>
+            <span>02 環保與拆機</span>
+            <h3>冷氣拆舊機與回收</h3>
+            <p>冷氣拆舊機交由安裝人員回收享「免收拆機工資（NT$ 0）」；若拆下後顧客需自行保留舊機才計收工資。同品項享廢四機免費回收。</p>
           </article>
           <article>
             <div className="note-icon-squircle">
