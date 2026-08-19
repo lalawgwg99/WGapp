@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "家電配送安裝費試算｜2026 費率",
+  title: "家電配送安裝費試算",
   description: "家電配送安裝費用試算工具，快速計算運費、樓層費與冷氣/壁掛施工加項費用。",
   metadataBase: new URL("https://wgapp.pages.dev"),
   openGraph: {

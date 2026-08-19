@@ -267,7 +267,6 @@ export default function Home() {
       )}
       <header className="site-header">
         <a className="brand" href="#top" aria-label="回到頁首">
-          <span className="brand-mark">易</span>
           <span>家電配送安裝費試算</span>
         </a>
         <nav aria-label="主要導覽">
@@ -275,12 +274,11 @@ export default function Home() {
           <a href="#fees">完整價目</a>
           <a href="#notes">計費說明</a>
         </nav>
-        <span className="version-pill">2026 費率</span>
       </header>
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span /> 五甲店 · 價格含稅</p>
+          <p className="eyebrow"><span /> 配送安裝計費 · 價格含稅</p>
           <h1>家電配送與安裝<br /><em>費用試算</em></h1>
           <p className="hero-lead">
             選擇商品、配送地點與樓層，快速計算運費及安裝加項，同址配送跨區費只計一次。
@@ -331,13 +329,13 @@ export default function Home() {
               <span>即時費用預估</span>
               <span className="live-dot">即時計算</span>
             </div>
-            <div className="sample-line"><span>商品基本費</span><b>{cartRows.length > 0 ? money(baseTotal) : "NT$ 3,100"}</b></div>
-            <div className="sample-line"><span>跨區運費</span><b>{selectedArea.fee === null ? "另議" : money(areaTotal)}</b></div>
+            <div className="sample-line"><span>商品基本費</span><b>{money(baseTotal)}</b></div>
+            <div className="sample-line"><span>跨區運費</span><b>{cartRows.length > 0 ? (selectedArea.fee === null ? "另議" : money(areaTotal)) : "NT$ 0"}</b></div>
             {stairTotal > 0 && <div className="sample-line"><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
-            <div className="sample-line"><span>施工加項</span><b>{money(extraTotal)}</b></div>
-            <div className="sample-total"><span>預估合計</span><strong>{money(total > 0 ? total : 4100)}</strong></div>
+            {extraTotal > 0 && <div className="sample-line"><span>施工加項</span><b>{money(extraTotal)}</b></div>}
+            <div className="sample-total"><span>預估合計</span><strong>{money(total)}</strong></div>
             <div className="receipt-dashes" />
-            <small>同址訂單跨區費只計一次 · 價格含稅</small>
+            <small>{total > 0 ? "同址訂單跨區費只計一次 · 價格含稅" : "選擇商品後即時同步試算 · 價格含稅"}</small>
           </div>
         </div>
       </section>
@@ -498,7 +496,7 @@ export default function Home() {
                     <div className={`${qty > 0 ? "extra-card selected" : "extra-card"}${needsQuote ? " quote-only" : ""}${group ? ` wall-${group}` : ""}`} key={item.id}>
                       <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0}>
                         <span className="check-mark">{qty > 0 ? "✓" : needsQuote ? "詢" : "+"}</span>
-                        <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}</b><small>{needsQuote ? (qty > 0 ? "已加入 · 現場報價" : "點此加入另議清單") : `${money(item.price)}／${item.unit}`}</small></span>
+                        <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}</b><small>{needsQuote ? (qty > 0 ? "已加入 · 現場報價" : "點此加入另議清單") : `${item.price !== null ? money(item.price) : "另議"}／${item.unit}`}</small></span>
                       </button>
                       {qty > 0 && !needsQuote && (
                         <div className="mini-stepper">
@@ -668,14 +666,14 @@ export default function Home() {
           <article><span>04</span><h3>額外施工先報價</h3><p>超出標準安裝之管線延長、改電、洗洞或特殊壁掛等，施工前皆會先報價經同意後施作。</p></article>
         </div>
         <div className="source-note">
-          <div><span className="brand-mark small">易</span><p><b>費率標準</b><br />依據家電配送安裝 2026 版標準收費。</p></div>
-          <p>試算結果僅供參考，實際收費以合約與現場施工評估為準。</p>
+          <div><p><b>收費依據</b><br />依據標準家電配送安裝合約費率計收。</p></div>
+          <p>試算結果僅供參考，實際收費以門市合約與現場施工評估為準。</p>
         </div>
       </section>
 
       <footer>
-        <div className="brand"><span className="brand-mark">易</span><span>家電配送安裝費試算</span></div>
-        <p>© 2026 家電配送安裝費試算 · 五甲店</p>
+        <div className="brand"><span>家電配送安裝費試算</span></div>
+        <p>家電配送安裝費用線上試算工具</p>
         <a href="#top">回到頁首 ↑</a>
       </footer>
     </main>
