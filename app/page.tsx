@@ -823,18 +823,18 @@ export default function Home() {
                 const inCart = Boolean(cart[item.id]) || (selectedExtras[item.id] ?? 0) > 0;
                 return (
                   <tr key={`fee-${item.id}`} className={inCart ? "row-selected" : ""}>
-                    <td>
+                    <td className="fee-td-badge">
                       <span className={`table-badge badge-${subBadge.type}`}>
                         {subBadge.text}
                       </span>
                     </td>
-                    <td>
+                    <td className="fee-td-name">
                       <strong className="item-title">{item.name}</strong>
                     </td>
-                    <td>
+                    <td className="fee-td-note">
                       <span className="item-note">{item.note || "標準施工規範；單機滿萬免基本運送安裝"}</span>
                     </td>
-                    <td className="item-price-cell">
+                    <td className="fee-td-price item-price-cell">
                       {isQuote ? (
                         <span className="price-quote">現場另議</span>
                       ) : (
@@ -844,7 +844,7 @@ export default function Home() {
                         </>
                       )}
                     </td>
-                    <td style={{ textAlign: "center" }}>
+                    <td className="fee-td-action" style={{ textAlign: "center" }}>
                       <button
                         type="button"
                         className="table-add-btn"

@@ -553,8 +553,98 @@ footer a:hover { color: var(--brand-blue); }
   .heading-row { flex-direction: column; }
   .search-box { width: 100%; }
   .filter { min-height: 44px; padding: 10px 16px; }
-  .fee-table th, .fee-table td { padding: 10px 12px; }
-  .table-add-btn { min-height: 38px; min-width: 60px; }
+  .filter-row { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .filter-row::-webkit-scrollbar { display: none; }
+
+  /* 手機版價目表：自動轉為 Apple 卡片列表，告別橫向滑動 */
+  .fee-table-wrap {
+    overflow-x: visible;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin-top: 12px;
+  }
+  .fee-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .fee-table thead {
+    display: none;
+  }
+  .fee-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  .fee-table tr {
+    display: grid;
+    grid-template-areas:
+      "badge price"
+      "name name"
+      "note note"
+      "action action";
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 6px 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .fee-table tr.row-selected {
+    border-color: var(--brand-blue);
+    background: var(--brand-blue-subtle);
+  }
+  .fee-table td {
+    padding: 0;
+    border: 0;
+    display: block;
+  }
+  .fee-td-badge {
+    grid-area: badge;
+  }
+  .fee-td-name {
+    grid-area: name;
+    margin-top: 2px;
+  }
+  .fee-td-name .item-title {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+  .fee-td-note {
+    grid-area: note;
+  }
+  .fee-td-note .item-note {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+  }
+  .fee-td-price {
+    grid-area: price;
+    text-align: right;
+  }
+  .fee-td-price .price-num {
+    font-size: 16px;
+    color: var(--brand-blue);
+    font-weight: 800;
+  }
+  .fee-td-action {
+    grid-area: action;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .fee-td-action .table-add-btn {
+    width: 100%;
+    min-height: 38px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
   .note-cards { grid-template-columns: 1fr; }
   .source-note { flex-direction: column; align-items: flex-start; }
   footer { padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px)); flex-direction: column; align-items: flex-start; }
