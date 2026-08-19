@@ -202,17 +202,61 @@ main { width: 100%; overflow-x: clip; }
 /* 試算主區塊 (Calculator Section) */
 .calculator-section {
   background: var(--bg-surface);
-  border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 72px max(24px, calc((100vw - 1240px)/2)) 90px;
+  padding: 44px max(24px, calc((100vw - 1240px)/2)) 80px;
 }
-.section-heading { max-width: 1240px; margin: 0 auto 32px; }
-.section-heading h2 { font-size: clamp(28px, 3.2vw, 40px); }
+.section-heading { max-width: 1240px; margin: 0 auto 28px; }
+.section-heading h2 { font-size: clamp(28px, 3.2vw, 38px); }
 .section-heading > p:last-child { color: var(--text-secondary); margin-top: 8px; font-size: 15px; }
+
+/* Spotlight 萬用搜尋列 */
+.universal-search-wrap { position: relative; max-width: 680px; margin-top: 20px; margin-bottom: 6px; }
+.universal-search {
+  height: 52px; display: grid; grid-template-columns: 44px minmax(0,1fr) 40px; align-items: center;
+  background: var(--bg-app); border: 1.5px solid var(--border-subtle); border-radius: 12px;
+  box-shadow: var(--shadow-sm); transition: all .15s ease;
+}
+.universal-search:focus-within {
+  border-color: var(--brand-blue);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12), var(--shadow-md);
+}
+.universal-search > span { text-align: center; color: var(--text-muted); font-size: 18px; }
+.universal-search input { width: 100%; height: 100%; border: 0; outline: 0; background: transparent; color: var(--text-primary); font-size: 14px; font-weight: 600; }
+.universal-search input::placeholder { color: var(--text-muted); font-weight: 500; }
+.universal-search > button { height: 100%; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 18px; }
+.universal-results {
+  position: absolute; z-index: 25; left: 0; right: 0; top: 58px; max-height: 380px; overflow-y: auto;
+  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px;
+  box-shadow: var(--shadow-xl); padding: 6px;
+}
+.universal-results > button {
+  width: 100%; min-height: 52px; display: grid; grid-template-columns: auto minmax(0,1fr) auto auto;
+  align-items: center; gap: 12px; padding: 9px 12px; border: 0; border-bottom: 1px solid #f1f5f9;
+  background: transparent; color: var(--text-primary); text-align: left; cursor: pointer; border-radius: 8px;
+  transition: background .12s ease;
+}
+.universal-results > button:last-of-type { border-bottom: 0; }
+.universal-results > button:hover, .universal-results > button:focus-visible { background: var(--bg-surface-subtle); outline: none; }
+.universal-results > p { margin: 0; padding: 20px; color: var(--text-muted); text-align: center; font-size: 13px; }
+.result-kind { min-width: 38px; padding: 3px 8px; border-radius: 6px; background: var(--brand-blue-subtle); color: var(--brand-blue); text-align: center; font-size: 11px; font-weight: 700; }
+.result-copy { min-width: 0; }
+.result-copy b { display: block; font-size: 13px; color: var(--text-primary); }
+.result-copy small { display: block; margin-top: 2px; color: var(--text-muted); font-size: 11px; }
+.result-price { white-space: nowrap; color: var(--text-primary); font-size: 13px; font-weight: 700; }
+.result-action { white-space: nowrap; color: var(--brand-blue); font-size: 12px; font-weight: 700; }
+
+.search-shortcuts { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 10px; color: var(--text-muted); font-size: 12px; }
+.search-shortcuts button {
+  padding: 4px 10px; border: 1px solid var(--border-subtle); border-radius: 999px;
+  background: var(--bg-surface); color: var(--text-secondary); cursor: pointer; font-size: 11px; font-weight: 600;
+  transition: all .15s ease;
+}
+.search-shortcuts button:hover { border-color: var(--brand-blue); color: var(--brand-blue); background: var(--brand-blue-subtle); }
 
 /* 分類 Segmented Tabs */
 .category-tabs {
-  max-width: 1240px; margin: 0 auto 20px; display: grid; grid-template-columns: repeat(6, 1fr);
+  max-width: 1240px; margin: 24px auto 20px; display: grid; grid-template-columns: repeat(6, 1fr);
   background: var(--bg-surface-subtle); border-radius: 12px; padding: 4px; gap: 4px; border: 1px solid var(--border-subtle);
 }
 .category-tab {

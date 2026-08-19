@@ -276,21 +276,20 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="hero" id="top">
-        <div className="hero-copy">
+      <section className="calculator-section hero-app-section" id="calculator">
+        <div className="section-heading">
           <p className="eyebrow"><span /> 配送安裝計費 · 價格含稅</p>
-          <h1>家電配送與安裝<br /><em>費用試算</em></h1>
-          <p className="hero-lead">
-            選擇商品、配送地點與樓層，快速計算運費及安裝加項，同址配送跨區費只計一次。
-          </p>
+          <h2>家電配送安裝費用試算</h2>
+          <p>選擇商品規格、配送地點與樓層，系統即時計算運費及施工加項，同址配送跨區費只計一次。</p>
+
           <div className="universal-search-wrap">
             <label className="universal-search">
               <span aria-hidden="true">⌕</span>
               <input
                 value={globalQuery}
                 onChange={(event) => setGlobalQuery(event.target.value)}
-                placeholder="搜尋商品、區域或施工加項"
-                aria-label="萬用搜尋"
+                placeholder="快速搜尋商品型號、配送鄉鎮或施工項目…"
+                aria-label="快速搜尋"
                 aria-expanded={globalResults.length > 0}
                 aria-controls="universal-results"
                 aria-autocomplete="list"
@@ -306,45 +305,18 @@ export default function Home() {
                     <span className={`result-kind kind-${result.kind}`}>{result.kind}</span>
                     <span className="result-copy"><b>{result.title}</b><small>{result.meta}</small></span>
                     <span className="result-price">{result.price === null ? "另議" : money(result.price)}</span>
-                    <span className="result-action">{result.kind === "商品" ? "加入" : result.kind === "地區" ? "帶入" : "選取"} →</span>
+                    <span className="result-action">{result.kind === "商品" ? "＋加入清單" : result.kind === "地區" ? "帶入地點" : "選取加項"} →</span>
                   </button>
-                )) : <p>查無相符項目，可輸入「冰箱」、「楠梓」或「銅管」。</p>}
+                )) : <p>查無相符項目，可嘗試搜尋「冰箱」、「楠梓」或「壁掛」。</p>}
               </div>
             )}
             <div className="search-shortcuts" aria-label="常用搜尋">
-              <span>常用：</span>
-              {["冰箱", "分離式", "楠梓", "壁掛"].map((word) => (
+              <span>快速篩選：</span>
+              {["冰箱", "分離式", "電視", "洗衣機", "楠梓", "壁掛"].map((word) => (
                 <button key={word} type="button" onClick={() => setGlobalQuery(word)}>{word}</button>
               ))}
             </div>
           </div>
-          <div className="hero-actions">
-            <a className="primary-button" href="#calculator">前往試算 <span>↓</span></a>
-            <a className="text-link" href="#fees">查閱完整價目 →</a>
-          </div>
-        </div>
-        <div className="hero-visual" aria-hidden="true">
-          <div className="price-card-main">
-            <div className="receipt-top">
-              <span>即時費用預估</span>
-              <span className="live-dot">即時計算</span>
-            </div>
-            <div className="sample-line"><span>商品基本費</span><b>{money(baseTotal)}</b></div>
-            <div className="sample-line"><span>跨區運費</span><b>{cartRows.length > 0 ? (selectedArea.fee === null ? "另議" : money(areaTotal)) : "NT$ 0"}</b></div>
-            {stairTotal > 0 && <div className="sample-line"><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
-            {extraTotal > 0 && <div className="sample-line"><span>施工加項</span><b>{money(extraTotal)}</b></div>}
-            <div className="sample-total"><span>預估合計</span><strong>{money(total)}</strong></div>
-            <div className="receipt-dashes" />
-            <small>{total > 0 ? "同址訂單跨區費只計一次 · 價格含稅" : "選擇商品後即時同步試算 · 價格含稅"}</small>
-          </div>
-        </div>
-      </section>
-
-      <section className="calculator-section" id="calculator">
-        <div className="section-heading">
-          <p className="eyebrow"><span /> 試算工具</p>
-          <h2>配送安裝費用試算</h2>
-          <p>選擇商品、送達地點與樓層，如有特殊施工可勾選加項。同址訂單跨區費只計一次。</p>
         </div>
 
         <div className="category-tabs" role="tablist" aria-label="商品分類">
