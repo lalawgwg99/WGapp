@@ -408,32 +408,44 @@ export default function Home() {
   const hasQuoteItems = selectedArea.fee === null || selectedExtraRows.some((row) => row.item.price === null);
   const hasEstimateItems = cartRows.length > 0 || selectedExtraRows.length > 0;
 
-  const copyEstimate = async () => {
+  const getQuoteText = () => {
     const lines = [
-      "【家電配送安裝試算明細】",
-      `配送地點：${selectedArea.place}`,
-      `搬運方式：${noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}`,
-      "",
-      ...cartRows.map(({ item, qty, isOver10k: item10k }) => `商品｜${item.name} × ${qty}｜${item10k ? "NT$ 0 (單機滿萬·免基本費)" : money((item.price ?? 0) * qty)}`),
+      "📋【五甲店 · 家電配送安裝試算明細】",
+      `📍 配送地點：${selectedArea.place}`,
+      `🏢 搬運方式：${noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}`,
+      "─────────────────",
+      ...cartRows.map(({ item, qty, isOver10k: item10k }) => `▫️ 商品：${item.name} × ${qty} → ${item10k ? "NT$ 0 (單機滿萬·免基本費)" : money((item.price ?? 0) * qty)}`),
       ...(cartRows.length ? [
-        `跨區費｜${selectedArea.fee === null ? "另議" : money(areaTotal)}`,
-        ...(stairTotal > 0 ? [`樓層搬運費｜${money(stairTotal)}`] : []),
+        `▫️ 跨區費：${selectedArea.fee === null ? "另議" : money(areaTotal)}（同址一次）`,
+        ...(stairTotal > 0 ? [`▫️ 樓層搬運費：${money(stairTotal)}`] : []),
       ] : []),
-      ...selectedExtraRows.map(({ item, qty }) => `加項｜${item.name} × ${qty}｜${item.price === null ? "另議" : money(item.price * qty)}`),
+      ...selectedExtraRows.map(({ item, qty }) => `▫️ 加項：${item.name} × ${qty} → ${item.price === null ? "另議" : money(item.price * qty)}`),
+      "─────────────────",
+      `💰 ${hasQuoteItems ? "已知費用合計" : "預估合計"}：${money(total)}`,
+      ...(discountTotal > 0 ? [`🎉 已享滿萬免運折抵：${money(discountTotal)}`] : []),
+      ...(hasQuoteItems ? ["⚠️ 提醒：另議項目未計入合計，依現場評估為準"] : []),
       "",
-      `${hasQuoteItems ? "已知費用合計" : "預估合計"}｜${money(total)}`,
-      ...(discountTotal > 0 ? [`已享滿萬免運折抵｜${money(discountTotal)}`] : []),
-      ...(hasQuoteItems ? ["提醒｜另議項目未計入合計"] : []),
-      "實際收費以門市與現場施工評估為準。",
+      "※ 本試算結果供參考，實際收費以門市合約與現場施工為準。",
     ];
+    return lines.join("\n");
+  };
 
+  const copyEstimate = async () => {
+    const text = getQuoteText();
     try {
-      await navigator.clipboard.writeText(lines.join("\n"));
+      await navigator.clipboard.writeText(text);
       setCopyStatus("copied");
     } catch {
       setCopyStatus("error");
     }
     window.setTimeout(() => setCopyStatus("idle"), 2200);
+  };
+
+  const shareToLine = () => {
+    if (!hasEstimateItems) return;
+    const text = getQuoteText();
+    const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`;
+    window.open(lineUrl, "_blank");
   };
 
   const handleAddFromTable = (item: FeeItem) => {
@@ -773,8 +785,16 @@ export default function Home() {
               <div className="estimate-footer">
                 <p><b>計費說明</b><br />單機滿萬元享免基本運送安裝費；同址多件商品跨區費僅收一次；特殊加項依現場條件為準。</p>
                 <div className="estimate-actions">
-                  <button className="copy-quote" onClick={copyEstimate} disabled={!hasEstimateItems}>{copyStatus === "copied" ? "已複製明細 ✓" : copyStatus === "error" ? "複製失敗，請重試" : "複製報價明細"}</button>
-                  <button onClick={() => { setCart({}); setOver10kMap({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); setCopyStatus("idle"); }}>清空清單</button>
+                  <button type="button" className="share-line-btn" onClick={shareToLine} disabled={!hasEstimateItems}>
+                    <span className="line-icon-badge" aria-hidden="true">LINE</span>
+                    一鍵傳送 LINE 報價
+                  </button>
+                  <button type="button" className="copy-quote" onClick={copyEstimate} disabled={!hasEstimateItems}>
+                    {copyStatus === "copied" ? "已複製明細 ✓" : copyStatus === "error" ? "複製失敗，請重試" : "複製報價明細"}
+                  </button>
+                  <button type="button" onClick={() => { setCart({}); setOver10kMap({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); setCopyStatus("idle"); }}>
+                    清空清單
+                  </button>
                 </div>
               </div>
             </aside>

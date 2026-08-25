@@ -474,11 +474,22 @@ main { width: 100%; overflow-x: clip; }
 .estimate-actions button {
   min-height: 44px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s ease;
 }
+.estimate-actions .share-line-btn {
+  background: #06c755; color: #ffffff; border: 0;
+  box-shadow: 0 2px 8px rgba(6, 199, 85, 0.28);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.estimate-actions .share-line-btn:hover { background: #05b34c; }
+.estimate-actions .share-line-btn:disabled { opacity: .4; cursor: not-allowed; }
+.line-icon-badge {
+  background: rgba(255, 255, 255, 0.25); color: #ffffff; font-size: 10px; font-weight: 900;
+  letter-spacing: 0.05em; padding: 2px 6px; border-radius: 4px;
+}
 .estimate-actions .copy-quote { background: #09090b; color: #ffffff; border: 0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); }
 .estimate-actions .copy-quote:hover { background: #18181b; }
 .estimate-actions .copy-quote:disabled { opacity: .4; cursor: not-allowed; }
-.estimate-actions button:not(.copy-quote) { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
-.estimate-actions button:not(.copy-quote):hover { background: var(--bg-surface-subtle); color: var(--text-primary); }
+.estimate-actions button:not(.copy-quote):not(.share-line-btn) { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
+.estimate-actions button:not(.copy-quote):not(.share-line-btn):hover { background: var(--bg-surface-subtle); color: var(--text-primary); }
 
 /* 完整價目表 (Stripe / Linear Table Style) */
 .fees-section { max-width: 1240px; margin: 0 auto; padding: 80px 28px; }
