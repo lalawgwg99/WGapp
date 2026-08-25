@@ -472,7 +472,6 @@ export default function Home() {
         <div className="section-heading">
           <p className="eyebrow"><span /> 五甲店 · 2026 收費標準</p>
           <h2>家電配送安裝費用試算</h2>
-          <p>單機滿萬享免基本運送安裝費，同址跨區費只收一次。即時試算商品運送、樓層搬運與施工加項。</p>
 
           <div className="universal-search-wrap">
             <label className="universal-search">
