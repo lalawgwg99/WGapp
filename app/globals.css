@@ -1,47 +1,67 @@
 @import "tailwindcss";
 
 :root {
-  /* TaiCalc 現代極簡生活決策調色盤 */
-  --bg-app: #f8fafc;
+  /* 高質感 黑·黃·綠 (Obsidian, Amber Gold, Emerald) 專業配色 */
+  --bg-app: #fafaf9;
   --bg-surface: #ffffff;
-  --bg-surface-subtle: #f1f5f9;
-  --bg-surface-hover: #f8fafc;
+  --bg-surface-subtle: #f4f4f5;
+  --bg-surface-hover: #fafafa;
   
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-primary: #09090b;
+  --text-secondary: #3f3f46;
+  --text-muted: #71717a;
   
-  --border-subtle: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-focus: #2563eb;
+  --border-subtle: #e4e4e7;
+  --border-medium: #d4d4d8;
+  --border-focus: #09090b;
   
-  --brand-blue: #2563eb;
-  --brand-blue-hover: #1d4ed8;
-  --brand-blue-subtle: #eff6ff;
-  --brand-blue-border: #bfdbfe;
+  /* 黑 (Obsidian Black) - 主題按鈕與核心錨點 */
+  --theme-black: #09090b;
+  --theme-black-hover: #18181b;
+  --theme-black-subtle: #f4f4f5;
   
-  --accent-orange: #ea580c;
-  --accent-orange-subtle: #fff7ed;
+  /* 黃 (Amber Gold) - 品牌亮點、焦點、醒目標籤 */
+  --brand-yellow: #d97706;
+  --brand-yellow-light: #fbbf24;
+  --brand-yellow-subtle: #fef3c7;
+  --brand-yellow-border: #fde68a;
+  --brand-yellow-text: #92400e;
   
-  --success-green: #10b981;
+  /* 綠 (Emerald Green) - 滿萬免運、折扣優惠、完成狀態 */
+  --brand-green: #059669;
+  --brand-green-light: #10b981;
+  --brand-green-subtle: #ecfdf5;
+  --brand-green-border: #a7f3d0;
+  --brand-green-text: #065f46;
+  
+  /* 主題映射 */
+  --brand-blue: #09090b;
+  --brand-blue-hover: #18181b;
+  --brand-blue-subtle: #fef3c7;
+  --brand-blue-border: #fde68a;
+  
+  --accent-orange: #d97706;
+  --accent-orange-subtle: #fef3c7;
+  
+  --success-green: #059669;
   --success-green-subtle: #ecfdf5;
-  --success-green-text: #047857;
+  --success-green-text: #065f46;
   
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.02);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.03);
-  --shadow-lg: 0 10px 25px -4px rgb(0 0 0 / 0.06), 0 4px 6px -2px rgb(0 0 0 / 0.04);
-  --shadow-xl: 0 20px 35px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.03);
+  --shadow-lg: 0 10px 25px -4px rgb(0 0 0 / 0.08), 0 4px 6px -2px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 35px -5px rgb(0 0 0 / 0.12), 0 8px 10px -6px rgb(0 0 0 / 0.05);
 
   /* 相容舊版變數 */
-  --ink: #0f172a;
-  --teal: #2563eb;
-  --teal-2: #1d4ed8;
-  --mint: #eff6ff;
-  --cream: #f8fafc;
+  --ink: #09090b;
+  --teal: #09090b;
+  --teal-2: #18181b;
+  --mint: #ecfdf5;
+  --cream: #fafaf9;
   --paper: #ffffff;
-  --orange: #ea580c;
-  --line: #e2e8f0;
-  --muted: #64748b;
+  --orange: #d97706;
+  --line: #e4e4e7;
+  --muted: #71717a;
 }
 
 * { box-sizing: border-box; }
@@ -61,12 +81,12 @@ main { width: 100%; overflow-x: clip; }
 /* 頂部 Toast 提示 */
 .toast-pill {
   position: fixed; z-index: 100; top: 24px; left: 50%; transform: translateX(-50%);
-  background: var(--text-primary); color: white; border-radius: 999px; padding: 10px 20px;
+  background: var(--theme-black); color: white; border-radius: 999px; padding: 10px 20px;
   display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-xl);
   font-size: 13px; font-weight: 600; animation: toastIn .22s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
 }
-.toast-pill a { color: #60a5fa; font-weight: 700; text-decoration: underline; }
+.toast-pill a { color: var(--brand-yellow-light); font-weight: 700; text-decoration: underline; }
 @keyframes toastIn {
   from { opacity: 0; transform: translate(-50%, -10px); }
   to { opacity: 1; transform: translate(-50%, 0); }
@@ -82,7 +102,7 @@ main { width: 100%; overflow-x: clip; }
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(16px);
   position: sticky;
   top: 0;
@@ -91,43 +111,44 @@ main { width: 100%; overflow-x: clip; }
 .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
 .brand-icon-squircle {
   width: 34px; height: 34px; display: grid; place-items: center;
-  background: linear-gradient(145deg, #0077ed 0%, #005bb5 100%);
-  color: white; border-radius: 9px;
-  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: linear-gradient(145deg, #18181b 0%, #09090b 100%);
+  color: #fbbf24; border-radius: 9px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border: 1px solid #27272a;
   flex: 0 0 auto; user-select: none;
 }
 .wg-logo-text {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   font-weight: 900; font-size: 14.5px; letter-spacing: -0.06em; line-height: 1;
-  color: #ffffff; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  color: #fbbf24; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 .site-header nav { display: flex; gap: 28px; font-size: 14px; font-weight: 600; color: var(--text-secondary); }
 .site-header nav a { transition: color .15s ease; }
-.site-header nav a:hover { color: var(--brand-blue); }
+.site-header nav a:hover { color: var(--brand-yellow); }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--brand-blue-subtle);
-  color: var(--brand-blue);
+  background: #fef3c7;
+  color: #92400e;
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.05em;
   padding: 4px 10px;
   border-radius: 999px;
   margin: 0 0 12px;
-  border: 1px solid var(--brand-blue-border);
+  border: 1px solid #fde68a;
 }
 .eyebrow span {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--brand-blue);
+  background: #d97706;
   display: inline-block;
 }
 
-/* 分類 Segmented Tabs (含 TaiCalc 質感向量圖標) */
+/* 分類 Segmented Tabs (黑黃綠質感) */
 .category-tabs {
   max-width: 1240px; margin: 24px auto 20px; display: grid; grid-template-columns: repeat(6, 1fr);
   background: var(--bg-surface-subtle); border-radius: 12px; padding: 4px; gap: 4px; border: 1px solid var(--border-subtle);
@@ -146,11 +167,11 @@ main { width: 100%; overflow-x: clip; }
 .category-tab:hover { color: var(--text-primary); }
 .category-tab:hover .tab-icon-wrap { color: var(--text-primary); }
 .category-tab.active {
-  background: var(--bg-surface); color: var(--brand-blue);
-  box-shadow: var(--shadow-sm);
+  background: #09090b; color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
-.category-tab.active .tab-icon-wrap { color: var(--brand-blue); }
-.category-tab.active small { color: var(--brand-blue); opacity: .85; }
+.category-tab.active .tab-icon-wrap { color: #fbbf24; }
+.category-tab.active small { color: #fde68a; opacity: .9; }
 
 /* 試算器 Grid 佈局 */
 .calculator-grid { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(330px, 0.75fr); gap: 28px; align-items: start; }
@@ -413,8 +434,8 @@ main { width: 100%; overflow-x: clip; }
 .estimate-actions button {
   min-height: 44px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s ease;
 }
-.estimate-actions .copy-quote { background: var(--brand-blue); color: white; border: 0; box-shadow: 0 2px 8px rgba(0, 113, 227, 0.25); }
-.estimate-actions .copy-quote:hover { background: var(--brand-blue-hover); }
+.estimate-actions .copy-quote { background: #09090b; color: #ffffff; border: 0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); }
+.estimate-actions .copy-quote:hover { background: #18181b; }
 .estimate-actions .copy-quote:disabled { opacity: .4; cursor: not-allowed; }
 .estimate-actions button:not(.copy-quote) { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
 .estimate-actions button:not(.copy-quote):hover { background: var(--bg-surface-subtle); color: var(--text-primary); }
@@ -692,13 +713,13 @@ footer a:hover { color: var(--brand-blue); }
     position: fixed; z-index: 30; left: 12px; right: 12px;
     bottom: max(12px, env(safe-area-inset-bottom, 12px)); height: 60px;
     display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px;
-    padding: 0 16px; border-radius: 12px; background: var(--text-primary); color: white;
-    box-shadow: var(--shadow-xl);
+    padding: 0 16px; border-radius: 12px; background: #09090b; color: white;
+    box-shadow: var(--shadow-xl); border: 1px solid #27272a;
   }
-  .mobile-total span { font-size: 11px; font-weight: 700; opacity: .8; }
-  .mobile-total b { font-size: 18px; font-weight: 800; color: #60a5fa; text-align: right; }
-  .mobile-total b small { display: block; margin-top: 1px; font-size: 9px; }
-  .mobile-total em { font-size: 11px; font-style: normal; font-weight: 700; color: #93c5fd; }
+  .mobile-total span { font-size: 11px; font-weight: 700; opacity: .85; color: #e4e4e7; }
+  .mobile-total b { font-size: 18px; font-weight: 800; color: #fbbf24; text-align: right; }
+  .mobile-total b small { display: block; margin-top: 1px; font-size: 9px; color: #fde68a; }
+  .mobile-total em { font-size: 11px; font-style: normal; font-weight: 700; color: #34d399; }
 }
 
 @media (prefers-reduced-motion: reduce) {
