@@ -197,6 +197,7 @@ const preferredExtras: Record<"appliance" | "split" | "window", string[]> = {
 };
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<"calculator" | "fees" | "notes">("calculator");
   const [mode, setMode] = useState<"appliance" | "split" | "window">("appliance");
   const [productCategory, setProductCategory] = useState<ProductCategory>("電視");
   const [productId, setProductId] = useState(products[0].id);
@@ -451,494 +452,521 @@ export default function Home() {
       {toastMessage && (
         <div className="toast-pill" role="status" aria-live="polite">
           <span>{toastMessage}</span>
-          <a href="#calculator" onClick={() => setToastMessage(null)}>查看明細 →</a>
+          <button type="button" className="toast-btn" onClick={() => { setActiveTab("calculator"); setToastMessage(null); }}>查看明細 →</button>
         </div>
       )}
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="回到頁首">
+        <a className="brand" href="#top" onClick={(e) => { e.preventDefault(); setActiveTab("calculator"); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label="回到首頁試算">
           <div className="brand-icon-squircle" aria-label="WG 標誌">
             <span className="wg-logo-text">WG</span>
           </div>
           <span>家電配送安裝費試算</span>
         </a>
         <nav aria-label="主要導覽">
-          <a href="#calculator">費用試算</a>
-          <a href="#fees">完整價目</a>
-          <a href="#notes">計費說明</a>
+          <button type="button" className={activeTab === "calculator" ? "nav-btn active" : "nav-btn"} onClick={() => { setActiveTab("calculator"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>費用試算</button>
+          <button type="button" className={activeTab === "fees" ? "nav-btn active" : "nav-btn"} onClick={() => { setActiveTab("fees"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>完整價目</button>
+          <button type="button" className={activeTab === "notes" ? "nav-btn active" : "nav-btn"} onClick={() => { setActiveTab("notes"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>計費說明</button>
         </nav>
       </header>
 
-      <section className="calculator-section hero-app-section" id="calculator">
-        <div className="section-heading">
-          <p className="eyebrow"><span /> 五甲店 · 2026 收費標準</p>
-          <h2>家電配送安裝費用試算</h2>
+      {/* 視圖 1: 費用試算 (核心試算器) */}
+      {activeTab === "calculator" && (
+        <section className="calculator-section hero-app-section" id="calculator">
+          <div className="section-heading">
+            <p className="eyebrow"><span /> 五甲店 · 2026 收費標準</p>
+            <h2>家電配送安裝費用試算</h2>
 
-          <div className="universal-search-wrap">
-            <label className="universal-search">
-              <span aria-hidden="true">⌕</span>
-              <input
-                value={globalQuery}
-                onChange={(event) => setGlobalQuery(event.target.value)}
-                placeholder="快速搜尋商品型號、配送鄉鎮或施工項目…"
-                aria-label="快速搜尋"
-                aria-expanded={globalResults.length > 0}
-                aria-controls="universal-results"
-                aria-autocomplete="list"
-                role="combobox"
-                autoComplete="off"
-              />
-              {globalQuery && <button type="button" onClick={() => setGlobalQuery("")} aria-label="清除搜尋">×</button>}
-            </label>
-            {globalQuery && (
-              <div className="universal-results" id="universal-results" role="listbox" aria-label="萬用搜尋結果">
-                {globalResults.length > 0 ? globalResults.map((result) => (
-                  <button key={`${result.kind}-${result.id}`} type="button" onClick={() => applyGlobalResult(result)} role="option" aria-selected="false">
-                    <span className={`result-kind kind-${result.kind}`}>{result.kind}</span>
-                    <span className="result-copy"><b>{result.title}{"isNew" in result && result.isNew && <span className="new-tag">NEW</span>}</b><small>{result.meta}</small></span>
-                    <span className="result-price">{result.price === null ? "另議" : money(result.price)}</span>
-                    <span className="result-action">{result.kind === "商品" ? "＋加入清單" : result.kind === "地區" ? "帶入地點" : "選取加項"} →</span>
-                  </button>
-                )) : <p>查無相符項目，可嘗試搜尋「冰箱」、「楠梓」或「壁掛」。</p>}
+            <div className="universal-search-wrap">
+              <label className="universal-search">
+                <span aria-hidden="true">⌕</span>
+                <input
+                  value={globalQuery}
+                  onChange={(event) => setGlobalQuery(event.target.value)}
+                  placeholder="快速搜尋商品型號、配送鄉鎮或施工項目…"
+                  aria-label="快速搜尋"
+                  aria-expanded={globalResults.length > 0}
+                  aria-controls="universal-results"
+                  aria-autocomplete="list"
+                  role="combobox"
+                  autoComplete="off"
+                />
+                {globalQuery && <button type="button" onClick={() => setGlobalQuery("")} aria-label="清除搜尋">×</button>}
+              </label>
+              {globalQuery && (
+                <div className="universal-results" id="universal-results" role="listbox" aria-label="萬用搜尋結果">
+                  {globalResults.length > 0 ? globalResults.map((result) => (
+                    <button key={`${result.kind}-${result.id}`} type="button" onClick={() => applyGlobalResult(result)} role="option" aria-selected="false">
+                      <span className={`result-kind kind-${result.kind}`}>{result.kind}</span>
+                      <span className="result-copy"><b>{result.title}{"isNew" in result && result.isNew && <span className="new-tag">NEW</span>}</b><small>{result.meta}</small></span>
+                      <span className="result-price">{result.price === null ? "另議" : money(result.price)}</span>
+                      <span className="result-action">{result.kind === "商品" ? "＋加入清單" : result.kind === "地區" ? "帶入地點" : "選取加項"} →</span>
+                    </button>
+                  )) : <p>查無相符項目，可嘗試搜尋「冰箱」、「楠梓」或「壁掛」。</p>}
+                </div>
+              )}
+              <div className="search-shortcuts" aria-label="常用搜尋">
+                <span>快速篩選：</span>
+                {["冰箱", "分離式", "電視", "洗衣機", "楠梓", "壁掛"].map((word) => (
+                  <button key={word} type="button" onClick={() => setGlobalQuery(word)}>{word}</button>
+                ))}
               </div>
-            )}
-            <div className="search-shortcuts" aria-label="常用搜尋">
-              <span>快速篩選：</span>
-              {["冰箱", "分離式", "電視", "洗衣機", "楠梓", "壁掛"].map((word) => (
-                <button key={word} type="button" onClick={() => setGlobalQuery(word)}>{word}</button>
-              ))}
             </div>
           </div>
-        </div>
 
-        {/* 分類 Segmented Tabs (含 Apple 質感圖標) */}
-        <div className="category-tabs" role="tablist" aria-label="商品分類">
-          {productCategories.map((category) => {
-            const IconComponent = category.Icon;
-            return (
-              <button
-                key={category.id}
-                className={productCategory === category.id ? "category-tab active" : "category-tab"}
-                onClick={() => switchCategory(category.id)}
-                role="tab"
-                aria-selected={productCategory === category.id}
-              >
-                <div className="tab-icon-wrap">
-                  <IconComponent className="w-5 h-5" />
+          {/* 分類 Segmented Tabs (含 Apple 質感圖標) */}
+          <div className="category-tabs" role="tablist" aria-label="商品分類">
+            {productCategories.map((category) => {
+              const IconComponent = category.Icon;
+              return (
+                <button
+                  key={category.id}
+                  className={productCategory === category.id ? "category-tab active" : "category-tab"}
+                  onClick={() => switchCategory(category.id)}
+                  role="tab"
+                  aria-selected={productCategory === category.id}
+                >
+                  <div className="tab-icon-wrap">
+                    <IconComponent className="w-5 h-5" />
+                  </div>
+                  <span>{category.id}</span>
+                  <small>{category.hint}</small>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="calculator-grid">
+            <div className="calculator-form">
+              {/* Step 01 */}
+              <div className="step-block">
+                <div className={`step-title ${cartRows.length > 0 ? "completed" : ""}`}>
+                  <b>{cartRows.length > 0 ? "✓" : "01"}</b>
+                  <div>
+                    <h3>選擇商品</h3>
+                    <p>{cartRows.length ? `已加入 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品，可繼續加入其他家電` : "點選規格膠囊或選單加入清單"}</p>
+                  </div>
                 </div>
-                <span>{category.id}</span>
-                <small>{category.hint}</small>
-              </button>
-            );
-          })}
-        </div>
 
-        <div className="calculator-grid">
-          <div className="calculator-form">
-            {/* Step 01 */}
-            <div className="step-block">
-              <div className={`step-title ${cartRows.length > 0 ? "completed" : ""}`}>
-                <b>{cartRows.length > 0 ? "✓" : "01"}</b>
-                <div>
-                  <h3>選擇商品</h3>
-                  <p>{cartRows.length > 0 ? `已加入 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品（可繼續加入其他規格）` : "點選規格膠囊或選單加入清單"}</p>
+                <div className="spec-chips-wrap">
+                  <span className="spec-chips-label">{productCategory}常用規格：</span>
+                  <div className="spec-chips">
+                    {currentList.map((item) => (
+                      <button
+                        key={`chip-${item.id}`}
+                        type="button"
+                        className={productId === item.id ? "spec-chip active" : "spec-chip"}
+                        onClick={() => selectProduct(item.id)}
+                      >
+                        {item.name.replace(/^[1-9] 對 [1-9]｜/, "")}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* 規格按鈕膠囊 (Spec Chips) */}
-              <div className="spec-chips-wrap">
-                <span className="spec-chips-label">{productCategory}常用規格：</span>
-                <div className="spec-chips">
-                  {currentList.slice(0, 6).map((item) => (
-                    <button
-                      key={`chip-${item.id}`}
-                      type="button"
-                      className={`spec-chip ${productId === item.id ? "active" : ""}`}
-                      onClick={() => selectProduct(item.id)}
-                    >
-                      {item.name.replace(/^液晶電視 |^冰箱／冷凍櫃 |^滾筒洗衣機 |^洗衣機 |^1 對 1｜|^窗型／直立式｜/, "")} · {item.price ? money(item.price) : "另議"}
-                    </button>
+                <div className="field-grid add-grid">
+                  <label className="field">
+                    <span>{productCategory}完整型號規格</span>
+                    <select value={productId} onChange={(e) => selectProduct(e.target.value)}>
+                      {currentList.map((item) => (
+                        <option key={item.id} value={item.id}>{item.name} ｜ {item.price !== null ? money(item.price) : "另議"}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="field">
+                    <span>數量</span>
+                    <div className="stepper">
+                      <button onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label="減少數量">−</button>
+                      <input type="number" min={1} value={quantity} onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))} aria-label="商品數量" />
+                      <button onClick={() => setQuantity((value) => value + 1)} aria-label="增加數量">＋</button>
+                    </div>
+                  </label>
+                  <button className="add-product" onClick={addToCart}>＋ 加入清單</button>
+                </div>
+
+                <label className="checkbox-10k">
+                  <input
+                    type="checkbox"
+                    checked={isOver10k}
+                    onChange={(e) => setIsOver10k(e.target.checked)}
+                  />
+                  <span>單機金額達 NT$ 10,000 以上（享免基本運送安裝費）</span>
+                </label>
+
+                {current.note && <p className="inline-note">備註：{current.note}</p>}
+
+                <div className="cart-stack">
+                  {cartRows.length === 0 && (
+                    <div className="cart-empty">
+                      <b>尚未加入商品</b>
+                      <span>請由上方選取規格並點擊「＋加入清單」</span>
+                    </div>
+                  )}
+                  {cartRows.map(({ item, qty, isOver10k: item10k }) => (
+                    <div className="cart-row" key={item.id}>
+                      <span className="cart-index">#{cartRows.indexOf(cartRows.find((r) => r.item.id === item.id)!) + 1}</span>
+                      <div className="cart-name">
+                        <b>{item.name}</b>
+                        <div>
+                          {item10k ? (
+                            <span className="badge-free">滿萬免基本運費</span>
+                          ) : (
+                            <small>基本運送安裝：{money((item.price ?? 0))}／{item.unit}</small>
+                          )}
+                          <button
+                            type="button"
+                            className="toggle-10k-btn"
+                            onClick={() => toggleItemOver10k(item.id)}
+                          >
+                            {item10k ? "改為未滿萬計費" : "改為滿萬免運"}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="mini-stepper cart-stepper">
+                        <button onClick={() => setCartQuantity(item.id, qty - 1)} aria-label={`減少${item.name}`}>−</button>
+                        <span>{qty}</span>
+                        <button onClick={() => setCartQuantity(item.id, qty + 1)} aria-label={`增加${item.name}`}>＋</button>
+                      </div>
+                      <strong>
+                        {item10k ? (
+                          <>
+                            <del className="strikethrough-price">{money((item.price ?? 0) * qty)}</del>
+                            <span className="free-price">NT$ 0</span>
+                          </>
+                        ) : (
+                          money((item.price ?? 0) * qty)
+                        )}
+                      </strong>
+                      <button className="remove-product" onClick={() => setCartQuantity(item.id, 0)} aria-label={`移除${item.name}`}>移除</button>
+                    </div>
                   ))}
                 </div>
               </div>
 
-              <div className="field-grid add-grid">
-                <label className="field wide">
-                  <span>{productCategory}完整型號規格</span>
-                  <select value={productId} onChange={(e) => selectProduct(e.target.value)}>
-                    {productCategory === "冷氣" ? (
-                      <>
-                        <optgroup label="分離式冷氣">
-                          {splitAC.map((item) => <option key={item.id} value={item.id}>{item.name} — {money(item.price ?? 0)}</option>)}
-                        </optgroup>
-                        <optgroup label="窗型／直立式／移動式冷氣">
-                          {windowAC.map((item) => <option key={item.id} value={item.id}>{item.name} — {money(item.price ?? 0)}</option>)}
-                        </optgroup>
-                      </>
-                    ) : (
-                      <optgroup label={productCategory}>
-                        {currentList.map((item) => <option key={item.id} value={item.id}>{item.name} — {money(item.price ?? 0)}</option>)}
-                      </optgroup>
-                    )}
-                  </select>
-                </label>
-                <label className="field">
-                  <span>數量</span>
-                  <div className="stepper">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="減少數量">−</button>
-                    <input aria-label="商品數量" min="1" type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))} />
-                    <button onClick={() => setQuantity(quantity + 1)} aria-label="增加數量">＋</button>
+              {/* Step 02 */}
+              <div className="step-block">
+                <div className="step-title completed">
+                  <b>02</b>
+                  <div>
+                    <h3>配送地點與樓層</h3>
+                    <p>送達 <b>{selectedArea.place}</b> ｜ 搬運：{noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}</p>
                   </div>
-                </label>
-                <button className="add-product" onClick={addToCart}>＋ 加入清單</button>
+                </div>
+                <div className="field-grid two">
+                  <label className="field">
+                    <span>鄉鎮／區域</span>
+                    <select value={area} onChange={(e) => setArea(e.target.value)}>
+                      {areaOptions.map((option) => (
+                        <option key={option.value} value={option.value}>{option.place}｜跨區費 {option.fee === null ? "另議" : `+${money(option.fee)}`}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <div className="field">
+                    <span>搬運方式</span>
+                    <div className="delivery-switch" role="group" aria-label="搬運方式">
+                      <button className={!noElevator ? "active" : ""} onClick={() => setNoElevator(false)}>有電梯（免樓層費）</button>
+                      <button className={noElevator ? "active" : ""} onClick={() => setNoElevator(true)}>無電梯</button>
+                    </div>
+                    {noElevator && (
+                      <label className="floor-select">
+                        <span>送達</span>
+                        <select value={floor} onChange={(e) => setFloor(Number(e.target.value))}>
+                          {[3,4,5,6,7,8,9,10].map((value) => <option key={value} value={value}>{value} 樓</option>)}
+                        </select>
+                      </label>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <label className="checkbox-10k">
-                <input
-                  type="checkbox"
-                  checked={isOver10k}
-                  onChange={(e) => setIsOver10k(e.target.checked)}
-                />
-                <span>單機金額達 NT$ 10,000 以上（享免基本運送安裝費）</span>
-              </label>
+              {/* Step 03 智慧收折施工加項 */}
+              <div className="step-block">
+                <div className={`step-title ${selectedExtraRows.length > 0 ? "completed" : ""}`}>
+                  <b>{selectedExtraRows.length > 0 ? "✓" : "03"}</b>
+                  <div style={{ flex: 1 }}>
+                    <h3>施工與安裝加項</h3>
+                    <p>{selectedExtraRows.length > 0 ? `已選取 ${selectedExtraRows.length} 項施工加項` : "如需壁掛、拆舊機、拉管線可在此選取（可略過）"}</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="step-toggle-btn"
+                    onClick={() => setShowAllExtras((prev) => !prev)}
+                  >
+                    {showAllExtras || selectedExtraRows.length > 0 ? "收起" : "＋選取"}
+                  </button>
+                </div>
 
-              {current.note && <p className="inline-note">{current.note}</p>}
+                {(showAllExtras || selectedExtraRows.length > 0) ? (
+                  <>
+                    <div className="extras-grid">
+                      {availableExtras.map((item) => {
+                        const qty = selectedExtras[item.id] ?? 0;
+                        const needsQuote = item.price === null;
+                        const group = wallGroup(item);
+                        return (
+                          <div className={`${qty > 0 ? "extra-card selected" : "extra-card"}${needsQuote ? " quote-only" : ""}${group ? ` wall-${group}` : ""}`} key={item.id}>
+                            <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0}>
+                              <span className="check-mark">{qty > 0 ? "✓" : needsQuote ? "詢" : "+"}</span>
+                              <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}{item.isNew && <span className="new-tag">NEW</span>}</b><small>{needsQuote ? (qty > 0 ? "已加入 · 現場報價" : "點此加入另議清單") : `${item.price !== null ? money(item.price) : "另議"}／${item.unit}`}</small></span>
+                            </button>
+                            {qty > 0 && !needsQuote && (
+                              <div className="mini-stepper">
+                                <button onClick={() => setExtra(item.id, qty - 1)} aria-label={`減少${item.name}`}>−</button>
+                                <span>{qty}</span>
+                                <button onClick={() => setExtra(item.id, qty + 1)} aria-label={`增加${item.name}`}>＋</button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {sortedExtras.length > 6 && (
+                      <button className="more-extras" onClick={() => setShowAllExtras((value) => !value)}>
+                        {showAllExtras ? "收起加項" : `展開其餘 ${sortedExtras.length - 6} 項`}
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="quick-open-extras"
+                    onClick={() => setShowAllExtras(true)}
+                  >
+                    <span>＋ 點此選取特殊施工加項（壁掛／冷氣管線／洗孔／拆機）</span>
+                    <small>若無需特殊加項，可直接查看右側試算結果</small>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <aside className="estimate-card" id="estimate" aria-live="polite">
+              <div className="estimate-label"><span className="live-dot">費用試算明細</span><small>價格含稅</small></div>
+              <h3>{cartRows.length ? `同址配送（共 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件）` : "尚未選擇商品"}</h3>
               
-              <div className="cart-stack" aria-label="本次配送商品清單">
-                {cartRows.length === 0 ? (
-                  <div className="cart-empty"><b>尚未加入商品</b><span>請選擇上方規格與數量後點擊「＋加入清單」</span></div>
-                ) : cartRows.map(({ item, qty, isOver10k: item10k }) => (
-                  <div className="cart-row" key={`cart-${item.id}`}>
-                    <div className="cart-index">{String(cartRows.findIndex((row) => row.item.id === item.id) + 1).padStart(2, "0")}</div>
-                    <div className="cart-name">
-                      <b>{item.name}</b>
-                      <small>
-                        {item10k ? (
-                          <>原基本費 {money(item.price ?? 0)}／{item.unit}</>
-                        ) : (
-                          <>{money(item.price ?? 0)}／{item.unit}</>
-                        )}
-                      </small>
-                      {item10k && <span className="badge-free">滿萬免運</span>}
-                      <div>
-                        <button
-                          type="button"
-                          className="toggle-10k-btn"
-                          onClick={() => toggleItemOver10k(item.id)}
-                        >
-                          {item10k ? "改為未滿萬自付" : "改為滿萬免基本費"}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="mini-stepper cart-stepper">
-                      <button onClick={() => setCartQuantity(item.id, qty - 1)} aria-label={`減少${item.name}`}>−</button>
-                      <span>{qty}</span>
-                      <button onClick={() => setCartQuantity(item.id, qty + 1)} aria-label={`增加${item.name}`}>＋</button>
-                    </div>
-                    <strong>
-                      {item10k ? (
-                        <>
-                          <del className="strikethrough-price">{money((item.price ?? 0) * qty)}</del>
-                          <span className="free-price">NT$ 0</span>
-                        </>
-                      ) : (
-                        money((item.price ?? 0) * qty)
-                      )}
-                    </strong>
-                    <button className="remove-product" onClick={() => setCartQuantity(item.id, 0)} aria-label={`移除${item.name}`}>移除</button>
+              {discountTotal > 0 && (
+                <div className="discount-pill">
+                  <span>滿萬免基本運費折抵</span>
+                  <b>−{money(discountTotal)}</b>
+                </div>
+              )}
+
+              <div className="estimate-total"><small>{hasQuoteItems ? "已知費用合計" : "預估合計"}</small><strong>{money(total)}</strong></div>
+              <div className="estimate-lines">
+                {cartRows.map(({ item, qty, isOver10k: item10k }) => (
+                  <div key={`summary-${item.id}`}>
+                    <span>{item.name} × {qty} {item10k && <small className="tag-free">（滿萬免運）</small>}</span>
+                    <b>{item10k ? "NT$ 0" : money((item.price ?? 0) * qty)}</b>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* Step 02 */}
-            <div className="step-block">
-              <div className="step-title completed">
-                <b>02</b>
-                <div>
-                  <h3>配送地點與樓層</h3>
-                  <p>送達 <b>{selectedArea.place}</b> ｜ 搬運：{noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}</p>
-                </div>
-              </div>
-              <div className="field-grid two">
-                <label className="field">
-                  <span>鄉鎮／區域</span>
-                  <select value={area} onChange={(e) => setArea(e.target.value)}>
-                    {areaOptions.map((option) => (
-                      <option key={option.value} value={option.value}>{option.place}｜跨區費 {option.fee === null ? "另議" : `+${money(option.fee)}`}</option>
-                    ))}
-                  </select>
-                </label>
-                <div className="field">
-                  <span>搬運方式</span>
-                  <div className="delivery-switch" role="group" aria-label="搬運方式">
-                    <button className={!noElevator ? "active" : ""} onClick={() => setNoElevator(false)}>有電梯（免樓層費）</button>
-                    <button className={noElevator ? "active" : ""} onClick={() => setNoElevator(true)}>無電梯</button>
+                {cartRows.length > 0 && (
+                  <div className="summary-subtotal">
+                    <span>商品基本費小計</span>
+                    <b>{money(baseTotal)}{discountTotal > 0 && <small className="tag-free">（已折抵 {money(discountTotal)}）</small>}</b>
                   </div>
-                  {noElevator && (
-                    <label className="floor-select">
-                      <span>送達</span>
-                      <select value={floor} onChange={(e) => setFloor(Number(e.target.value))}>
-                        {[3,4,5,6,7,8,9,10].map((value) => <option key={value} value={value}>{value} 樓</option>)}
-                      </select>
-                    </label>
-                  )}
+                )}
+                {cartRows.length > 0 && <div><span>{selectedArea.place}跨區費（同址一次）</span><b>{selectedArea.fee === null ? "另議" : money(areaTotal)}</b></div>}
+                {stairTotal > 0 && <div><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
+                {selectedExtraRows.map(({ item, qty }) => (
+                  <div key={item.id}><span>{item.name} × {qty}</span><b>{item.price === null ? "另議" : money(item.price * qty)}</b></div>
+                ))}
+              </div>
+              {hasQuoteItems && <p className="quote-warning"><b>另議項目未計入合計</b><br />特殊施工與未列項目，費用依現場評估確認為準。</p>}
+              <div className="estimate-footer">
+                <p><b>計費說明</b><br />單機滿萬元享免基本運送安裝費；同址多件商品跨區費僅收一次；特殊加項依現場條件為準。</p>
+                <div className="estimate-actions">
+                  <button className="copy-quote" onClick={copyEstimate} disabled={!hasEstimateItems}>{copyStatus === "copied" ? "已複製明細 ✓" : copyStatus === "error" ? "複製失敗，請重試" : "複製報價明細"}</button>
+                  <button onClick={() => { setCart({}); setOver10kMap({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); setCopyStatus("idle"); }}>清空清單</button>
                 </div>
               </div>
-            </div>
-
-            {/* Step 03 */}
-            <div className="step-block">
-              <div className={`step-title ${selectedExtraRows.length > 0 ? "completed" : ""}`}>
-                <b>{selectedExtraRows.length > 0 ? "✓" : "03"}</b>
-                <div>
-                  <h3>施工與安裝加項</h3>
-                  <p>{selectedExtraRows.length > 0 ? `已選取 ${selectedExtraRows.length} 項加項施工` : "如需壁掛、拆舊機、拉管線等特殊施工可在此勾選（可略過）"}</p>
-                </div>
-              </div>
-              <div className="extras-grid">
-                {availableExtras.map((item) => {
-                  const qty = selectedExtras[item.id] ?? 0;
-                  const needsQuote = item.price === null;
-                  const group = wallGroup(item);
-                  return (
-                    <div className={`${qty > 0 ? "extra-card selected" : "extra-card"}${needsQuote ? " quote-only" : ""}${group ? ` wall-${group}` : ""}`} key={item.id}>
-                      <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0}>
-                        <span className="check-mark">{qty > 0 ? "✓" : needsQuote ? "詢" : "+"}</span>
-                        <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}{item.isNew && <span className="new-tag">NEW</span>}</b><small>{needsQuote ? (qty > 0 ? "已加入 · 現場報價" : "點此加入另議清單") : `${item.price !== null ? money(item.price) : "另議"}／${item.unit}`}</small></span>
-                      </button>
-                      {qty > 0 && !needsQuote && (
-                        <div className="mini-stepper">
-                          <button onClick={() => setExtra(item.id, qty - 1)} aria-label={`減少${item.name}`}>−</button>
-                          <span>{qty}</span>
-                          <button onClick={() => setExtra(item.id, qty + 1)} aria-label={`增加${item.name}`}>＋</button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              {sortedExtras.length > 6 && (
-                <button className="more-extras" onClick={() => setShowAllExtras((value) => !value)}>
-                  {showAllExtras ? "收起加項" : `展開其餘 ${sortedExtras.length - 6} 項`}
-                </button>
-              )}
-            </div>
+            </aside>
           </div>
-
-          <aside className="estimate-card" id="estimate" aria-live="polite">
-            <div className="estimate-label"><span className="live-dot">費用試算明細</span><small>價格含稅</small></div>
-            <h3>{cartRows.length ? `同址配送（共 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件）` : "尚未選擇商品"}</h3>
-            
-            {discountTotal > 0 && (
-              <div className="discount-pill">
-                <span>滿萬免基本運費折抵</span>
-                <b>−{money(discountTotal)}</b>
-              </div>
-            )}
-
-            <div className="estimate-total"><small>{hasQuoteItems ? "已知費用合計" : "預估合計"}</small><strong>{money(total)}</strong></div>
-            <div className="estimate-lines">
-              {cartRows.map(({ item, qty, isOver10k: item10k }) => (
-                <div key={`summary-${item.id}`}>
-                  <span>{item.name} × {qty} {item10k && <small className="tag-free">（滿萬免運）</small>}</span>
-                  <b>{item10k ? "NT$ 0" : money((item.price ?? 0) * qty)}</b>
-                </div>
-              ))}
-              {cartRows.length > 0 && (
-                <div className="summary-subtotal">
-                  <span>商品基本費小計</span>
-                  <b>{money(baseTotal)}{discountTotal > 0 && <small className="tag-free">（已折抵 {money(discountTotal)}）</small>}</b>
-                </div>
-              )}
-              {cartRows.length > 0 && <div><span>{selectedArea.place}跨區費（同址一次）</span><b>{selectedArea.fee === null ? "另議" : money(areaTotal)}</b></div>}
-              {stairTotal > 0 && <div><span>樓層搬運費</span><b>{money(stairTotal)}</b></div>}
-              {selectedExtraRows.map(({ item, qty }) => (
-                <div key={item.id}><span>{item.name} × {qty}</span><b>{item.price === null ? "另議" : money(item.price * qty)}</b></div>
-              ))}
-            </div>
-            {hasQuoteItems && <p className="quote-warning"><b>另議項目未計入合計</b><br />特殊施工與未列項目，費用依現場評估確認為準。</p>}
-            <div className="estimate-footer">
-              <p><b>計費說明</b><br />單機滿萬元享免基本運送安裝費；同址多件商品跨區費僅收一次；特殊加項依現場條件為準。</p>
-              <div className="estimate-actions">
-                <button className="copy-quote" onClick={copyEstimate} disabled={!hasEstimateItems}>{copyStatus === "copied" ? "已複製明細 ✓" : copyStatus === "error" ? "複製失敗，請重試" : "複製報價明細"}</button>
-                <button onClick={() => { setCart({}); setOver10kMap({}); setQuantity(1); setArea(areaOptions[0].value); setNoElevator(false); setFloor(3); setSelectedExtras({}); setCopyStatus("idle"); }}>清空清單</button>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </section>
+        </section>
+      )}
 
       {cartRows.length > 0 && (
-        <a className="mobile-total" href="#estimate">
+        <button
+          type="button"
+          className="mobile-total"
+          onClick={() => {
+            setActiveTab("calculator");
+            window.setTimeout(() => document.getElementById("estimate")?.scrollIntoView({ behavior: "smooth" }), 50);
+          }}
+        >
           <span>{cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品</span>
           <b>{money(total)}{hasQuoteItems && <small>＋另議</small>}</b>
           <em>明細 ↑</em>
-        </a>
+        </button>
       )}
 
-      {/* 完整價目明細表 */}
-      <section className="fees-section" id="fees">
-        <div className="section-heading-row">
-          <div>
-            <p className="eyebrow"><span /> 價目明細</p>
-            <h2>完整服務收費標準</h2>
-            <p className="section-subtext">所有收費項目清楚條列，單機滿萬元享免基本運送安裝費。點擊「＋加入」可直接帶入試算。</p>
+      {/* 視圖 2: 完整價目明細表 */}
+      {activeTab === "fees" && (
+        <section className="fees-section" id="fees">
+          <div className="section-heading-row">
+            <div>
+              <p className="eyebrow"><span /> 價目明細</p>
+              <h2>完整服務收費標準</h2>
+              <p className="section-subtext">所有收費項目清楚條列，單機滿萬元享免基本運送安裝費。點擊「＋加入」可直接帶入試算。</p>
+            </div>
+            <div className="search-box">
+              <span aria-hidden="true">⌕</span>
+              <input value={feeQuery} onChange={(e) => setFeeQuery(e.target.value)} placeholder="搜尋價目表：冷氣、冰箱、壁掛、管線…" aria-label="搜尋完整價目" />
+            </div>
           </div>
-          <div className="search-box">
-            <span aria-hidden="true">⌕</span>
-            <input value={feeQuery} onChange={(e) => setFeeQuery(e.target.value)} placeholder="搜尋價目表：冷氣、冰箱、壁掛、管線…" aria-label="搜尋完整價目" />
+
+          {/* 6 大結構化主分類 Tab (含 SF Pro 圖標) */}
+          <div className="filter-row" aria-label="價目分類">
+            {mainCategoryFilters.map((filter) => {
+              const FilterIcon = filter.Icon;
+              return (
+                <button
+                  key={filter.id}
+                  className={feeFilter === filter.id ? "filter active" : "filter"}
+                  onClick={() => setFeeFilter(filter.id)}
+                >
+                  <FilterIcon className="w-4 h-4" />
+                  <span>{filter.label}</span>
+                  <span className="filter-count">({getCategoryCount(filter.id)})</span>
+                </button>
+              );
+            })}
           </div>
-        </div>
 
-        {/* 6 大結構化主分類 Tab (含 SF Pro 圖標) */}
-        <div className="filter-row" aria-label="價目分類">
-          {mainCategoryFilters.map((filter) => {
-            const FilterIcon = filter.Icon;
-            return (
-              <button
-                key={filter.id}
-                className={feeFilter === filter.id ? "filter active" : "filter"}
-                onClick={() => setFeeFilter(filter.id)}
-              >
-                <FilterIcon className="w-4 h-4" />
-                <span>{filter.label}</span>
-                <span className="filter-count">({getCategoryCount(filter.id)})</span>
-              </button>
-            );
-          })}
-        </div>
+          <div className="fee-table-wrap">
+            <table className="fee-table">
+              <thead>
+                <tr>
+                  <th style={{ width: "130px" }}>分類／屬性</th>
+                  <th style={{ width: "260px" }}>項目／規格</th>
+                  <th>施工與計價備註</th>
+                  <th style={{ width: "150px", textAlign: "right" }}>單價（含稅）</th>
+                  <th style={{ width: "100px", textAlign: "center" }}>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredFees.slice(0, feeLimit).map((item) => {
+                  const subBadge = getItemSubBadge(item);
+                  const isQuote = item.price === null;
+                  const inCart = Boolean(cart[item.id]) || (selectedExtras[item.id] ?? 0) > 0;
+                  return (
+                    <tr key={`fee-${item.id}`} className={inCart ? "row-selected" : ""}>
+                      <td className="fee-td-badge">
+                        <span className={`table-badge badge-${subBadge.type}`}>
+                          {subBadge.text}
+                        </span>
+                      </td>
+                      <td className="fee-td-name">
+                        <strong className="item-title">
+                          {item.name}
+                          {item.isNew && <span className="new-tag">NEW</span>}
+                        </strong>
+                      </td>
+                      <td className="fee-td-note">
+                        <span className="item-note">{item.note || "標準施工規範；單機滿萬免基本運送安裝"}</span>
+                      </td>
+                      <td className="fee-td-price item-price-cell">
+                        {isQuote ? (
+                          <span className="price-quote">現場另議</span>
+                        ) : (
+                          <>
+                            <span className="price-num">{money(item.price!)}</span>
+                            {item.unit && <small className="price-unit">／{item.unit}</small>}
+                          </>
+                        )}
+                      </td>
+                      <td className="fee-td-action" style={{ textAlign: "center" }}>
+                        <button
+                          type="button"
+                          className="table-add-btn"
+                          onClick={() => handleAddFromTable(item)}
+                          aria-label={`將 ${item.name} 加入試算`}
+                        >
+                          ＋ 加入
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {filteredFees.length === 0 && <p className="empty-state">查無相符項目。</p>}
+          </div>
+          {filteredFees.length > feeLimit && feeLimit === 80 && <p className="list-note">共 {filteredFees.length} 筆，請使用分類或關鍵字篩選。</p>}
 
-        <div className="fee-table-wrap">
-          <table className="fee-table">
-            <thead>
-              <tr>
-                <th style={{ width: "130px" }}>分類／屬性</th>
-                <th style={{ width: "260px" }}>項目／規格</th>
-                <th>施工與計價備註</th>
-                <th style={{ width: "150px", textAlign: "right" }}>單價（含稅）</th>
-                <th style={{ width: "100px", textAlign: "center" }}>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredFees.slice(0, feeLimit).map((item) => {
-                const subBadge = getItemSubBadge(item);
-                const isQuote = item.price === null;
-                const inCart = Boolean(cart[item.id]) || (selectedExtras[item.id] ?? 0) > 0;
-                return (
-                  <tr key={`fee-${item.id}`} className={inCart ? "row-selected" : ""}>
-                    <td className="fee-td-badge">
-                      <span className={`table-badge badge-${subBadge.type}`}>
-                        {subBadge.text}
-                      </span>
-                    </td>
-                    <td className="fee-td-name">
-                      <strong className="item-title">
-                        {item.name}
-                        {item.isNew && <span className="new-tag">NEW</span>}
-                      </strong>
-                    </td>
-                    <td className="fee-td-note">
-                      <span className="item-note">{item.note || "標準施工規範；單機滿萬免基本運送安裝"}</span>
-                    </td>
-                    <td className="fee-td-price item-price-cell">
-                      {isQuote ? (
-                        <span className="price-quote">現場另議</span>
-                      ) : (
-                        <>
-                          <span className="price-num">{money(item.price!)}</span>
-                          {item.unit && <small className="price-unit">／{item.unit}</small>}
-                        </>
-                      )}
-                    </td>
-                    <td className="fee-td-action" style={{ textAlign: "center" }}>
-                      <button
-                        type="button"
-                        className="table-add-btn"
-                        onClick={() => handleAddFromTable(item)}
-                        aria-label={`將 ${item.name} 加入試算`}
-                      >
-                        ＋ 加入
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {filteredFees.length === 0 && <p className="empty-state">查無相符項目。</p>}
-        </div>
-        {filteredFees.length > feeLimit && feeLimit === 80 && <p className="list-note">共 {filteredFees.length} 筆，請使用分類或關鍵字篩選。</p>}
+          {!feeQuery && feeFilter === "全部" && filteredFees.length > 12 && (
+            <button className="show-all-fees" type="button" onClick={() => setShowAllFees((value) => !value)}>
+              {showAllFees ? "收起價目表" : `展開全部 ${filteredFees.length} 筆項目`}
+            </button>
+          )}
+        </section>
+      )}
 
-        {!feeQuery && feeFilter === "全部" && filteredFees.length > 12 && (
-          <button className="show-all-fees" type="button" onClick={() => setShowAllFees((value) => !value)}>
-            {showAllFees ? "收起價目表" : `展開全部 ${filteredFees.length} 筆項目`}
-          </button>
-        )}
-      </section>
+      {/* 視圖 3: 運費標準與注意事項 */}
+      {activeTab === "notes" && (
+        <>
+          <section className="area-section" id="area">
+            <div className="area-intro">
+              <p className="eyebrow"><span /> 運費標準</p>
+              <h2>五甲店 · 各區域跨區運費</h2>
+              <p>跨區費依送達區域計收，同址訂單只計一次；未列出之區域費用另議。</p>
+              <button type="button" className="text-link" onClick={() => { setActiveTab("calculator"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>前往試算 ↑</button>
+            </div>
+            <div className="area-table">
+              {Object.entries(areaFees).map(([key, info]) => (
+                <div key={key}>
+                  <strong>{info.price === null ? "另議" : `+${money(info.price)}`}</strong>
+                  <span>{info.places}</span>
+                </div>
+              ))}
+              <div className="area-other"><strong>其他偏遠地區</strong><span>超出表列區域費用另議</span></div>
+            </div>
+          </section>
 
-      <section className="area-section">
-        <div className="area-intro">
-          <p className="eyebrow"><span /> 運費標準</p>
-          <h2>五甲店 · 各區域跨區運費</h2>
-          <p>跨區費依送達區域計收，同址訂單只計一次；未列出之區域費用另議。</p>
-          <a href="#calculator" className="text-link">前往試算 ↑</a>
-        </div>
-        <div className="area-table">
-          {Object.entries(areaFees).map(([key, info]) => (
-            <div key={key}>
-              <strong>{info.price === null ? "另議" : `+${money(info.price)}`}</strong>
-              <span>{info.places}</span>
+          {/* 服務說明與保障 (含 Apple 質感圖標) */}
+          <section className="notes-section" id="notes">
+            <div className="section-heading">
+              <p className="eyebrow"><span /> 服務說明</p>
+              <h2>配送與施工注意事項</h2>
             </div>
-          ))}
-          <div className="area-other"><strong>其他偏遠地區</strong><span>超出表列區域費用另議</span></div>
-        </div>
-      </section>
-
-      {/* 服務說明與保障 (含 Apple 質感圖標) */}
-      <section className="notes-section" id="notes">
-        <div className="section-heading">
-          <p className="eyebrow"><span /> 服務說明</p>
-          <h2>配送與施工注意事項</h2>
-        </div>
-        <div className="note-cards">
-          <article>
-            <div className="note-icon-squircle">
-              <TagCheckIcon className="w-5 h-5" />
+            <div className="note-cards">
+              <article>
+                <div className="note-icon-squircle">
+                  <TagCheckIcon className="w-5 h-5" />
+                </div>
+                <span>01 優惠條款</span>
+                <h3>單機滿萬免基本費</h3>
+                <p>購買單機金額達 NT$ 10,000 以上商品，享免基本運送安裝費；跨區費、樓層費與額外施工另計。</p>
+              </article>
+              <article>
+                <div className="note-icon-squircle">
+                  <RecycleIcon className="w-5 h-5" />
+                </div>
+                <span>02 環保與拆機</span>
+                <h3>冷氣拆舊機與回收</h3>
+                <p>冷氣拆舊機交由安裝人員回收享「免收拆機工資（NT$ 0）」；若拆下後顧客需自行保留舊機才計收工資。同品項享廢四機免費回收。</p>
+              </article>
+              <article>
+                <div className="note-icon-squircle">
+                  <StairsIcon className="w-5 h-5" />
+                </div>
+                <span>03 搬運規範</span>
+                <h3>樓層搬運費</h3>
+                <p>無電梯 3 樓（含）以上加收樓層費，依商品尺寸每層加收 50～100 元，冷氣機型依標準計費。</p>
+              </article>
+              <article>
+                <div className="note-icon-squircle">
+                  <ShieldCheckIcon className="w-5 h-5" />
+                </div>
+                <span>04 透明保障</span>
+                <h3>特殊施工先報價</h3>
+                <p>高空危險施工、超出標準安裝之管線延長、改電、洗洞或特殊壁掛等，施工前皆會先報價經同意後施作。</p>
+              </article>
             </div>
-            <span>01 優惠條款</span>
-            <h3>單機滿萬免基本費</h3>
-            <p>購買單機金額達 NT$ 10,000 以上商品，享免基本運送安裝費；跨區費、樓層費與額外施工另計。</p>
-          </article>
-          <article>
-            <div className="note-icon-squircle">
-              <RecycleIcon className="w-5 h-5" />
+            <div className="source-note">
+              <div><p><b>收費依據</b><br />依據標準家電配送安裝合約費率計收。</p></div>
+              <p>試算結果僅供參考，實際收費以門市合約與現場施工評估為準。</p>
             </div>
-            <span>02 環保與拆機</span>
-            <h3>冷氣拆舊機與回收</h3>
-            <p>冷氣拆舊機交由安裝人員回收享「免收拆機工資（NT$ 0）」；若拆下後顧客需自行保留舊機才計收工資。同品項享廢四機免費回收。</p>
-          </article>
-          <article>
-            <div className="note-icon-squircle">
-              <StairsIcon className="w-5 h-5" />
-            </div>
-            <span>03 搬運規範</span>
-            <h3>樓層搬運費</h3>
-            <p>無電梯 3 樓（含）以上加收樓層費，依商品尺寸每層加收 50～100 元，冷氣機型依標準計費。</p>
-          </article>
-          <article>
-            <div className="note-icon-squircle">
-              <ShieldCheckIcon className="w-5 h-5" />
-            </div>
-            <span>04 透明保障</span>
-            <h3>特殊施工先報價</h3>
-            <p>高空危險施工、超出標準安裝之管線延長、改電、洗洞或特殊壁掛等，施工前皆會先報價經同意後施作。</p>
-          </article>
-        </div>
-        <div className="source-note">
-          <div><p><b>收費依據</b><br />依據標準家電配送安裝合約費率計收。</p></div>
-          <p>試算結果僅供參考，實際收費以門市合約與現場施工評估為準。</p>
-        </div>
-      </section>
+          </section>
+        </>
+      )}
 
       <footer>
         <div className="brand">
