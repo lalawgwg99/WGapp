@@ -470,9 +470,9 @@ export default function Home() {
 
       <section className="calculator-section hero-app-section" id="calculator">
         <div className="section-heading">
-          <p className="eyebrow"><span /> 配送安裝計費 · 價格含稅</p>
+          <p className="eyebrow"><span /> 五甲店 · 2026 收費標準</p>
           <h2>家電配送安裝費用試算</h2>
-          <p>選擇商品規格、配送地點與樓層，系統即時計算運費及施工加項，同址配送跨區費只計一次。</p>
+          <p>單機滿萬享免基本運送安裝費，同址跨區費只收一次。即時試算商品運送、樓層搬運與施工加項。</p>
 
           <div className="universal-search-wrap">
             <label className="universal-search">
@@ -685,7 +685,6 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              <p className="condition-summary">配送至 <b>{selectedArea.place}</b> ｜ 跨區運費：{selectedArea.fee === null ? "另議" : money(selectedArea.fee)} ｜ 搬運：{noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}</p>
             </div>
 
             {/* Step 03 */}
