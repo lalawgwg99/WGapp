@@ -336,6 +336,7 @@ export default function Home() {
       meta: item.category,
       price: item.price,
       value: item.id,
+      isNew: item.isNew,
       searchText: `${item.category}${item.name}${item.note ?? ""}`.toLowerCase(),
     })),
   ].filter((result) => result.searchText.includes(normalizedGlobalQuery)).slice(0, 8) : [];
@@ -494,7 +495,7 @@ export default function Home() {
                 {globalResults.length > 0 ? globalResults.map((result) => (
                   <button key={`${result.kind}-${result.id}`} type="button" onClick={() => applyGlobalResult(result)} role="option" aria-selected="false">
                     <span className={`result-kind kind-${result.kind}`}>{result.kind}</span>
-                    <span className="result-copy"><b>{result.title}</b><small>{result.meta}</small></span>
+                    <span className="result-copy"><b>{result.title}{"isNew" in result && result.isNew && <span className="new-tag">NEW</span>}</b><small>{result.meta}</small></span>
                     <span className="result-price">{result.price === null ? "另議" : money(result.price)}</span>
                     <span className="result-action">{result.kind === "商品" ? "＋加入清單" : result.kind === "地區" ? "帶入地點" : "選取加項"} →</span>
                   </button>
@@ -705,7 +706,7 @@ export default function Home() {
                     <div className={`${qty > 0 ? "extra-card selected" : "extra-card"}${needsQuote ? " quote-only" : ""}${group ? ` wall-${group}` : ""}`} key={item.id}>
                       <button className="extra-info" onClick={() => setExtra(item.id, qty > 0 ? 0 : 1)} aria-pressed={qty > 0}>
                         <span className="check-mark">{qty > 0 ? "✓" : needsQuote ? "詢" : "+"}</span>
-                        <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}</b><small>{needsQuote ? (qty > 0 ? "已加入 · 現場報價" : "點此加入另議清單") : `${item.price !== null ? money(item.price) : "另議"}／${item.unit}`}</small></span>
+                        <span>{group && <em className="wall-group-badge">{wallGroupLabel(group)}</em>}<b>{item.name}{item.isNew && <span className="new-tag">NEW</span>}</b><small>{needsQuote ? (qty > 0 ? "已加入 · 現場報價" : "點此加入另議清單") : `${item.price !== null ? money(item.price) : "另議"}／${item.unit}`}</small></span>
                       </button>
                       {qty > 0 && !needsQuote && (
                         <div className="mini-stepper">
@@ -833,7 +834,10 @@ export default function Home() {
                       </span>
                     </td>
                     <td className="fee-td-name">
-                      <strong className="item-title">{item.name}</strong>
+                      <strong className="item-title">
+                        {item.name}
+                        {item.isNew && <span className="new-tag">NEW</span>}
+                      </strong>
                     </td>
                     <td className="fee-td-note">
                       <span className="item-note">{item.note || "標準施工規範；單機滿萬免基本運送安裝"}</span>
