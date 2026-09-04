@@ -179,7 +179,6 @@ const areaOptions = Object.entries(areaFees).flatMap(([fee, info]) => {
   }));
 });
 
-const quickProductIds = ["tv55", "washer12", "fridge399", "split36", "window32"];
 type ProductCategory = "電視" | "冰箱" | "洗衣機" | "冷氣" | "小家電" | "影音";
 const productCategories: Array<{ id: ProductCategory; hint: string; Icon: React.ComponentType<{ className?: string }> }> = [
   { id: "電視", hint: "液晶電視", Icon: TvIcon },
@@ -1001,4 +1000,3 @@ export default function Home() {
     </main>
   );
 }
-
