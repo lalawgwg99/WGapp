@@ -215,6 +215,7 @@ export default function Home() {
   const [showAllFees, setShowAllFees] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [openStep, setOpenStep] = useState<"product" | "delivery" | "extras">("product");
 
   const currentList = productCategory === "電視" ? products.filter((item) => item.category === "電視")
     : productCategory === "冰箱" ? products.filter((item) => item.category === "冰箱")
@@ -354,11 +355,13 @@ export default function Home() {
     setCart((prev) => ({ ...prev, [current.id]: (prev[current.id] ?? 0) + quantity }));
     setOver10kMap((prev) => ({ ...prev, [current.id]: isOver10k }));
     setQuantity(1);
+    setOpenStep("delivery");
   };
 
   const addQuickItem = (id: string) => {
     setCart((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
     setOver10kMap((prev) => ({ ...prev, [id]: prev[id] ?? true }));
+    setOpenStep("delivery");
   };
 
   const toggleItemOver10k = (id: string) => {
@@ -549,15 +552,17 @@ export default function Home() {
           <div className="calculator-grid">
             <div className="calculator-form">
               {/* Step 01 */}
-              <div className="step-block">
-                <div className={`step-title ${cartRows.length > 0 ? "completed" : ""}`}>
+              <div className={`step-block ${openStep === "product" ? "is-open" : "is-collapsed"}`}>
+                <button type="button" className={`step-title step-header ${cartRows.length > 0 ? "completed" : ""}`} onClick={() => setOpenStep("product")} aria-expanded={openStep === "product"}>
                   <b>{cartRows.length > 0 ? "✓" : "01"}</b>
                   <div>
                     <h3>選擇商品</h3>
                     <p>{cartRows.length ? `已加入 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品，可繼續加入其他家電` : "點選規格膠囊或選單加入清單"}</p>
                   </div>
-                </div>
+                  <span className="step-action">{openStep === "product" ? "進行中" : "修改"}</span>
+                </button>
 
+                {openStep === "product" && <div className="step-content">
                 <div className="spec-chips-wrap">
                   <span className="spec-chips-label">{productCategory}常用規格：</span>
                   <div className="spec-chips">
@@ -651,17 +656,20 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
+                </div>}
               </div>
 
               {/* Step 02 */}
-              <div className="step-block">
-                <div className="step-title completed">
+              <div className={`step-block ${openStep === "delivery" ? "is-open" : "is-collapsed"}`}>
+                <button type="button" className="step-title step-header completed" onClick={() => setOpenStep("delivery")} aria-expanded={openStep === "delivery"}>
                   <b>02</b>
                   <div>
                     <h3>配送地點與樓層</h3>
                     <p>送達 <b>{selectedArea.place}</b> ｜ 搬運：{noElevator ? `無電梯 ${floor} 樓` : "有電梯（免樓層費）"}</p>
                   </div>
-                </div>
+                  <span className="step-action">{openStep === "delivery" ? "進行中" : "修改"}</span>
+                </button>
+                {openStep === "delivery" && <div className="step-content">
                 <div className="field-grid two">
                   <label className="field">
                     <span>鄉鎮／區域</span>
@@ -687,26 +695,22 @@ export default function Home() {
                     )}
                   </div>
                 </div>
+                <button type="button" className="next-step-btn" onClick={() => setOpenStep("extras")}>下一步：選施工加項（可略過）</button>
+                </div>}
               </div>
 
               {/* Step 03 智慧收折施工加項 */}
-              <div className="step-block">
-                <div className={`step-title ${selectedExtraRows.length > 0 ? "completed" : ""}`}>
+              <div className={`step-block ${openStep === "extras" ? "is-open" : "is-collapsed"}`}>
+                <button type="button" className={`step-title step-header ${selectedExtraRows.length > 0 ? "completed" : ""}`} onClick={() => setOpenStep("extras")} aria-expanded={openStep === "extras"}>
                   <b>{selectedExtraRows.length > 0 ? "✓" : "03"}</b>
                   <div style={{ flex: 1 }}>
                     <h3>施工與安裝加項</h3>
                     <p>{selectedExtraRows.length > 0 ? `已選取 ${selectedExtraRows.length} 項施工加項` : "如需壁掛、拆舊機、拉管線可在此選取（可略過）"}</p>
                   </div>
-                  <button
-                    type="button"
-                    className="step-toggle-btn"
-                    onClick={() => setShowAllExtras((prev) => !prev)}
-                  >
-                    {showAllExtras || selectedExtraRows.length > 0 ? "收起" : "＋選取"}
-                  </button>
-                </div>
+                  <span className="step-action">{openStep === "extras" ? "進行中" : selectedExtraRows.length > 0 ? "修改" : "選取"}</span>
+                </button>
 
-                {(showAllExtras || selectedExtraRows.length > 0) ? (
+                {openStep === "extras" && <div className="step-content">{(showAllExtras || selectedExtraRows.length > 0) ? (
                   <>
                     <div className="extras-grid">
                       {availableExtras.map((item) => {
@@ -745,7 +749,7 @@ export default function Home() {
                     <span>＋ 點此選取特殊施工加項（壁掛／冷氣管線／洗孔／拆機）</span>
                     <small>若無需特殊加項，可直接查看右側試算結果</small>
                   </button>
-                )}
+                )}</div>}
               </div>
             </div>
 

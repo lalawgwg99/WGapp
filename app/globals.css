@@ -781,3 +781,87 @@ footer a:hover { color: var(--brand-blue); }
   *, *::before, *::after { transition: none !important; }
 }
 
+/* 報價工具模式：以留白、底色與操作狀態取代大量邊框 */
+.calculator-grid { gap: 20px; }
+.calculator-form {
+  display: grid;
+  gap: 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+.step-block {
+  padding: 20px 22px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+.step-title.step-header {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.step-title.step-header:hover h3 { color: var(--brand-yellow-text); }
+.step-title > b { border: 0; background: var(--bg-surface-subtle); }
+.step-action {
+  margin-left: auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: var(--bg-surface-subtle);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.step-block.is-open .step-action { background: var(--brand-yellow-subtle); color: var(--brand-yellow-text); }
+.step-content { padding-top: 18px; }
+.spec-chip, .quick-adds button, .search-shortcuts button, .filter {
+  border-color: transparent;
+  background: var(--bg-surface-subtle);
+}
+.spec-chip.active { border-color: transparent; }
+.field select, .search-box input, .universal-search, .stepper, .delivery-switch {
+  border-color: transparent;
+  background: var(--bg-surface-subtle);
+  box-shadow: none;
+}
+.field select:focus, .search-box input:focus, .universal-search:focus-within {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, .18);
+}
+.next-step-btn {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--bg-surface-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+.next-step-btn:hover { background: var(--brand-yellow-subtle); color: var(--brand-yellow-text); }
+.extra-card, .quick-open-extras, .estimate-card, .estimate-total, .category-tabs {
+  border-color: transparent;
+}
+.extra-card { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .03); }
+.extra-card.selected { box-shadow: inset 0 0 0 2px var(--brand-yellow-light); }
+.estimate-card { box-shadow: var(--shadow-md); }
+.estimate-total { background: var(--bg-surface-subtle); }
+.category-tabs { box-shadow: var(--shadow-sm); }
+
+@media (max-width: 760px) {
+  .calculator-section { padding-bottom: 96px; }
+  .calculator-form { gap: 10px; }
+  .step-block { padding: 18px 16px; border-radius: 14px; }
+  .step-title.step-header { align-items: flex-start; }
+  .step-action { margin-top: 2px; }
+}
