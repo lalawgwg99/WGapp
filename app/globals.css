@@ -890,3 +890,9 @@ footer a:hover { color: var(--brand-blue); }
   .step-block { padding: 20px 18px; }
   .estimate-card { padding: 22px 18px; }
 }
+
+/* 修正：寬版覆寫（上方 .calculator-grid 雙欄）蓋掉了手機斷點的單欄，
+   必須在檔案最後重新宣告，手機/平板才能正確單欄排列 */
+@media (max-width: 1050px) {
+  .calculator-grid { grid-template-columns: 1fr; }
+}
