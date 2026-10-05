@@ -131,9 +131,13 @@ main { width: 100%; overflow-x: clip; }
 .nav-btn.active { color: var(--text-primary); font-weight: 700; background: var(--bg-surface-subtle); }
 .toast-btn { background: transparent; border: 0; color: var(--brand-yellow-light); font-weight: 700; cursor: pointer; text-decoration: underline; padding: 0; }
 
-/* 頂部 Segmented 視圖分頁導覽 (iOS 手感) */
+/* 頂部 Segmented 視圖分頁導覽 (iOS 手感)；桌機用 header nav，此僅手機版顯示 */
 .view-switcher-bar {
+  display: none;
   max-width: 1240px; margin: 16px auto 0; padding: 0 max(28px, calc((100vw - 1240px)/2));
+}
+@media (max-width: 1050px) {
+  .view-switcher-bar { display: block; }
 }
 .view-switcher {
   display: grid; grid-template-columns: repeat(3, 1fr);

@@ -483,6 +483,15 @@ export default function Home() {
         </nav>
       </header>
 
+      {/* 行動版視圖切換（桌機用 header nav，手機版 nav 被隱藏，改用這個） */}
+      <div className="view-switcher-bar" role="tablist" aria-label="視圖切換">
+        <div className="view-switcher">
+          <button type="button" role="tab" aria-selected={activeTab === "calculator"} className={activeTab === "calculator" ? "view-tab active" : "view-tab"} onClick={() => { setActiveTab("calculator"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>費用試算</button>
+          <button type="button" role="tab" aria-selected={activeTab === "fees"} className={activeTab === "fees" ? "view-tab active" : "view-tab"} onClick={() => { setActiveTab("fees"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>完整價目</button>
+          <button type="button" role="tab" aria-selected={activeTab === "notes"} className={activeTab === "notes" ? "view-tab active" : "view-tab"} onClick={() => { setActiveTab("notes"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>計費說明</button>
+        </div>
+      </div>
+
       {/* 視圖 1: 費用試算 (核心試算器) */}
       {activeTab === "calculator" && (
         <section className="calculator-section hero-app-section" id="calculator">
