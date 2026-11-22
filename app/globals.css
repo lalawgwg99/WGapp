@@ -938,3 +938,7 @@ footer { padding: 48px 20px; }
   .category-tabs { grid-template-columns: repeat(3, 1fr); }
   .calculator-grid { grid-template-columns: 1fr; }
 }
+/* C 補修（2026-11-22 視覺覆核）：eyebrow 是寫死黃底，覆寫掉；footer 加 margin auto，否則右側留空灰塊。WG 標誌黃字是品牌識別，保留。 */
+.eyebrow { background: #f4f4f5; color: #09090b; border-color: #e4e4e7; }
+.eyebrow span { background: #09090b; }
+footer { margin: 0 auto; }
