@@ -201,7 +201,7 @@ export default function Home() {
   const [productCategory, setProductCategory] = useState<ProductCategory>("電視");
   const [productId, setProductId] = useState(products[0].id);
   const [quantity, setQuantity] = useState(1);
-  const [isOver10k, setIsOver10k] = useState(true);
+  const [isOver10k, setIsOver10k] = useState(false);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [over10kMap, setOver10kMap] = useState<Record<string, boolean>>({});
   const [area, setArea] = useState(areaOptions[0].value);
@@ -235,7 +235,7 @@ export default function Home() {
     setProductCategory(next);
     setMode(next === "冷氣" ? "split" : "appliance");
     setProductId(list[0].id);
-    setIsOver10k(true);
+    setIsOver10k(false);
   };
 
   const selectProduct = (id: string) => {
@@ -255,7 +255,7 @@ export default function Home() {
     .map(([id, qty]) => ({
       item: orderableItems.find((entry) => entry.id === id),
       qty,
-      isOver10k: over10kMap[id] ?? true,
+      isOver10k: over10kMap[id] ?? false,
     }))
     .filter((row): row is { item: FeeItem; qty: number; isOver10k: boolean } => Boolean(row.item));
 
@@ -566,7 +566,7 @@ export default function Home() {
                   <b>{cartRows.length > 0 ? "✓" : "01"}</b>
                   <div>
                     <h3>選擇商品</h3>
-                    <p>{cartRows.length ? `已加入 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件商品，可繼續加入其他家電` : "點選規格膠囊或選單加入清單"}</p>
+                    <p>{cartRows.length ? `已加入 ${cartRows.reduce((sum, row) => sum + row.qty, 0)} 件` : "選規格"}</p>
                   </div>
                   <span className="step-action">{openStep === "product" ? "進行中" : "修改"}</span>
                 </button>
@@ -582,21 +582,13 @@ export default function Home() {
                         className={productId === item.id ? "spec-chip active" : "spec-chip"}
                         onClick={() => selectProduct(item.id)}
                       >
-                        {item.name.replace(/^[1-9] 對 [1-9]｜/, "")}
+                        {item.name.replace(/^[1-9] 對 [1-9]｜/, "")} ｜ {item.price !== null ? money(item.price) : "另議"}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div className="field-grid add-grid">
-                  <label className="field">
-                    <span>{productCategory}完整型號規格</span>
-                    <select value={productId} onChange={(e) => selectProduct(e.target.value)}>
-                      {currentList.map((item) => (
-                        <option key={item.id} value={item.id}>{item.name} ｜ {item.price !== null ? money(item.price) : "另議"}</option>
-                      ))}
-                    </select>
-                  </label>
                   <label className="field">
                     <span>數量</span>
                     <div className="stepper">
@@ -623,7 +615,6 @@ export default function Home() {
                   {cartRows.length === 0 && (
                     <div className="cart-empty">
                       <b>尚未加入商品</b>
-                      <span>請由上方選取規格並點擊「＋加入清單」</span>
                     </div>
                   )}
                   {cartRows.map(({ item, qty, isOver10k: item10k }) => (
@@ -704,7 +695,7 @@ export default function Home() {
                     )}
                   </div>
                 </div>
-                <button type="button" className="next-step-btn" onClick={() => setOpenStep("extras")}>下一步：選施工加項（可略過）</button>
+                <button type="button" className="next-step-btn" onClick={() => setOpenStep("extras")}>下一步：施工加項（可略過）</button>
                 </div>}
               </div>
 
@@ -714,7 +705,7 @@ export default function Home() {
                   <b>{selectedExtraRows.length > 0 ? "✓" : "03"}</b>
                   <div style={{ flex: 1 }}>
                     <h3>施工與安裝加項</h3>
-                    <p>{selectedExtraRows.length > 0 ? `已選取 ${selectedExtraRows.length} 項施工加項` : "如需壁掛、拆舊機、拉管線可在此選取（可略過）"}</p>
+                    <p>{selectedExtraRows.length > 0 ? `已選取 ${selectedExtraRows.length} 項施工加項` : "壁掛／拆舊機／拉管線，可略過"}</p>
                   </div>
                   <span className="step-action">{openStep === "extras" ? "進行中" : selectedExtraRows.length > 0 ? "修改" : "選取"}</span>
                 </button>
@@ -795,7 +786,7 @@ export default function Home() {
               </div>
               {hasQuoteItems && <p className="quote-warning"><b>另議項目未計入合計</b><br />特殊施工與未列項目，費用依現場評估確認為準。</p>}
               <div className="estimate-footer">
-                <p><b>計費說明</b><br />單機滿萬元享免基本運送安裝費；同址多件商品跨區費僅收一次；特殊加項依現場條件為準。</p>
+                <p><b>計費說明</b><br />單機滿萬元，免基本運送安裝費。同址跨區費只計一次。</p>
                 <div className="estimate-actions">
                   <button type="button" className="share-line-btn" onClick={shareToLine} disabled={!hasEstimateItems}>
                     <span className="line-icon-badge" aria-hidden="true">LINE</span>
@@ -836,7 +827,7 @@ export default function Home() {
             <div>
               <p className="eyebrow"><span /> 價目明細</p>
               <h2>完整服務收費標準</h2>
-              <p className="section-subtext">所有收費項目清楚條列，單機滿萬元享免基本運送安裝費。點擊「＋加入」可直接帶入試算。</p>
+              <p className="section-subtext">單機滿萬元，免基本運送安裝費。</p>
             </div>
             <div className="search-box">
               <span aria-hidden="true">⌕</span>
@@ -938,7 +929,7 @@ export default function Home() {
             <div className="area-intro">
               <p className="eyebrow"><span /> 運費標準</p>
               <h2>五甲店 · 各區域跨區運費</h2>
-              <p>跨區費依送達區域計收，同址訂單只計一次；未列出之區域費用另議。</p>
+              <p>同址訂單，跨區費只計一次。未列區域，另議。</p>
               <button type="button" className="text-link" onClick={() => { setActiveTab("calculator"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>前往試算 ↑</button>
             </div>
             <div className="area-table">
@@ -965,7 +956,7 @@ export default function Home() {
                 </div>
                 <span>01 優惠條款</span>
                 <h3>單機滿萬免基本費</h3>
-                <p>購買單機金額達 NT$ 10,000 以上商品，享免基本運送安裝費；跨區費、樓層費與額外施工另計。</p>
+                <p>單機 NT$ 10,000 以上，免基本運送安裝費。跨區費、樓層費、額外施工另計。</p>
               </article>
               <article>
                 <div className="note-icon-squircle">
@@ -973,7 +964,7 @@ export default function Home() {
                 </div>
                 <span>02 環保與拆機</span>
                 <h3>冷氣拆舊機與回收</h3>
-                <p>冷氣拆舊機交由安裝人員回收享「免收拆機工資（NT$ 0）」；若拆下後顧客需自行保留舊機才計收工資。同品項享廢四機免費回收。</p>
+                <p>舊機交人員回收，拆機工資 NT$ 0。自留舊機才收費。同品項廢四機免費回收。</p>
               </article>
               <article>
                 <div className="note-icon-squircle">
@@ -981,7 +972,7 @@ export default function Home() {
                 </div>
                 <span>03 搬運規範</span>
                 <h3>樓層搬運費</h3>
-                <p>無電梯 3 樓（含）以上加收樓層費，依商品尺寸每層加收 50～100 元，冷氣機型依標準計費。</p>
+                <p>無電梯 3 樓以上，每層加收 NT$ 50～100。</p>
               </article>
               <article>
                 <div className="note-icon-squircle">
@@ -989,7 +980,7 @@ export default function Home() {
                 </div>
                 <span>04 透明保障</span>
                 <h3>特殊施工先報價</h3>
-                <p>高空危險施工、超出標準安裝之管線延長、改電、洗洞或特殊壁掛等，施工前皆會先報價經同意後施作。</p>
+                <p>特殊施工，施工前先報價，同意後施作。</p>
               </article>
             </div>
             <div className="source-note">
@@ -1007,7 +998,6 @@ export default function Home() {
           </div>
           <span>家電配送安裝費試算</span>
         </div>
-        <p>家電配送安裝費用線上試算工具</p>
         <a href="#top">回到頁首 ↑</a>
       </footer>
     </main>

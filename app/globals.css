@@ -900,3 +900,41 @@ footer a:hover { color: var(--brand-blue); }
 @media (max-width: 1050px) {
   .calculator-grid { grid-template-columns: 1fr; }
 }
+
+/* C 留白極簡（2026-11-22，榮德定案）：單欄、去黃、只留重點文案。價目與試算邏輯不動。 */
+:root {
+  --brand-yellow: #09090b;
+  --brand-yellow-light: #09090b;
+  --brand-yellow-subtle: #f4f4f5;
+  --brand-yellow-border: #e4e4e7;
+  --brand-yellow-text: #09090b;
+  --brand-blue-subtle: #f4f4f5;
+  --brand-blue-border: #e4e4e7;
+  --accent-orange: #09090b;
+  --accent-orange-subtle: #f4f4f5;
+  --orange: #09090b;
+}
+.site-header, .section-heading, .category-tabs, .calculator-grid, .fees-section, .area-section, .notes-section, footer { max-width: 960px; }
+.calculator-grid { grid-template-columns: 1fr; gap: 48px; }
+.calculator-section, .fees-section, .area-section, .notes-section { padding-left: 20px; padding-right: 20px; }
+.section-heading { margin-bottom: 40px; }
+.section-heading h2 { font-size: 32px; }
+.category-tabs { grid-template-columns: repeat(6, 1fr); }
+.category-tab .tab-icon-wrap, .category-tab small { display: none; }
+.category-tab { padding: 12px 4px; }
+.spec-chip { padding: 10px 14px; }
+.spec-chip.active { background: #f4f4f5; border-color: #09090b; color: #09090b; }
+.step-block { margin-bottom: 40px; }
+.estimate-card { background: #fff; border: 1px solid var(--border-subtle); box-shadow: none; }
+.estimate-total strong { font-size: 36px; }
+.note-cards { grid-template-columns: 1fr; gap: 24px; }
+.note-icon-squircle, .note-cards article > span { display: none; }
+.note-cards article { padding: 0; border: 0; }
+.note-cards h3 { margin: 0 0 6px; }
+.note-cards p { margin: 0; }
+.source-note { border: 0; padding: 0; }
+footer { padding: 48px 20px; }
+@media (max-width: 1050px) {
+  .category-tabs { grid-template-columns: repeat(3, 1fr); }
+  .calculator-grid { grid-template-columns: 1fr; }
+}
